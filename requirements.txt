@@ -1,0 +1,13 @@
+Flask
+Flask-Admin
+Flask-Login>=0.3.0,<0.4
+Flask-security
+flask-wtf
+flask_sqlalchemy
+Flask-Script
+Flask-Mail
+sqlalchemy
+sqlalchemy_schemadisplay
+ipaddress
+python-dateutil
+jinja2<2.9

@@ -1,0 +1,9 @@
+data/cwispy/
+data/redeemer/
+dist/
+deb_dist/
+*.pyc
+__pycache__
+*.egg-info
+schema.png
+sample_db.sqlite
