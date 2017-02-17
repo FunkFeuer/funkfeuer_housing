@@ -4,9 +4,9 @@ from ..controller import accounting
 from sqlalchemy.sql.expression import func
 
 @manager.command
-def listcontracts():
+def bill_contracts():
     app.config['SQLALCHEMY_ECHO'] = False
-    accounting.listcontracts()
+    accounting.bill_contracts()
 
 
 @manager.command
