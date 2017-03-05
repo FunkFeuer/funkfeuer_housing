@@ -5,5 +5,6 @@
 4,"2017-01-01",,"upgrade","Power Upgrade 50W","Serverhousing 50W Power Upgrade",6.00,0.00,1
 5,"2017-01-01",,"vserver","VServer mini","Serverhousing",9.00,0.00,1
 6,"2017-01-01",,"vserver","VServer normal","Serverhousing",19.00,0.00,1
-7,"2017-01-01",,"housing","(old) Serverhousing Micro 12","Serverhousing  Micro Old 12",12.00,0.00,1
-8,"2017-01-01",,"housing","(old) Serverhousing Micro 15","Serverhousing  Micro Old 15",15.00,0.00,1
+7,"2017-01-01",,"housing","(old) Serverhousing Micro 12","(old) Serverhousing  Micro Old 12",12.00,0.00,1
+8,"2017-01-01",,"housing","(old) Serverhousing Micro 15","(old) Serverhousing  Micro Old 15",15.00,0.00,1
+9,"2017-01-01",,"upgrade","(old) Power Upgrade 50W","(old)  Serverhousing 50W Power Upgrade",5.00,0.00,1

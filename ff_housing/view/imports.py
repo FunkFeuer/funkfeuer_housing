@@ -11,7 +11,7 @@ packagemap = {
     '1' : {'id':1, 'billing_period': 1,  'quantity': 1}, # Serverhousing
     '3' : {'id':7, 'billing_period': 1,  'quantity': 1}, # Serverhousing Micro Old 12
     '4' : {'id':1, 'billing_period': 6,  'quantity': 1}, # 6 Monate Serverhousing
-    '10': {'id':4, 'billing_period': 1,  'quantity': 2}, # 100W Power Upgrade
+    '10': {'id':9, 'billing_period': 1,  'quantity': 2}, # 100W Power Upgrade
     '14': {'id':2, 'billing_period': 1,  'quantity': 1}, # Serverhousing Micro
     '15': {'id':1, 'billing_period': 12, 'quantity': 1}, # 1 Jahr Serverhousing
     '17': {'id':5, 'billing_period': 1,  'quantity': 1}, # VServer
@@ -79,7 +79,7 @@ def import_redeemer_csv(dir='data/'):
         
         db.session.commit()
         
-        with open(dir+'redeemer/customers.csv') as csvfile:
+        with open(dir+'redeemer/customers.csv', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile, dialect='excel-tab')
             for r in reader:
                 r = {k: None if (v=='\\N') else v for k, v in r.items()}
@@ -99,7 +99,7 @@ def import_redeemer_csv(dir='data/'):
                         street=r['street'],
                         zip=r['zip'],
                         town=r['town'],
-                        country=r['zip'])
+                        country='')
             
             user_datastore.create_user(
                 login='admin',
@@ -228,16 +228,15 @@ def import_cwispy_csv(dir='data/'):
                 
                 
                 if not server:
-                    print("!! could not find Server:", \
-                        model.Contact.query.filter(model.Contact.id==custidmapper[r['customerid']]).one(), \
-                        "\t", r['customerid'], \
+                    raise ValueError("could not find Server for Account %s" % r['accountid'], \
+                        str(model.Contact.query.filter(model.Contact.id==custidmapper[r['customerid']]).one()), \
+                        r['customerid'], \
                         packages[int(r['packagegroupid'])]['description'], \
                         r['dateopened'], \
                         r['status'], \
                         r['domain'], \
                         r['lastdatebilled'], \
                         r['nextdatebilled'])
-                    continue
                 
                 
                 # import accounts to DB

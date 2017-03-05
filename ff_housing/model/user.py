@@ -46,14 +46,20 @@ class Contact(db.Model):
         'polymorphic_identity': 'contact',
         'polymorphic_on': type
     }
-    
+
     @property
     def address(self):
         addr = "%s\n%s %s\n%s" % (self.street, self.zip, self.town, self.country) # state
         if(self.company_name):
             return ("%s\n%s %s\n\n%s" % (self.company_name, self.first_name, self.last_name, addr))
         return ("%s %s\n\n%s" % (self.first_name, self.last_name, addr))
-    
+
+    @property
+    def name(self):
+        if(self.company_name):
+            return "%s %s / %s" % (self.first_name, self.last_name, self.company_name)
+        return "%s %s" % (self.first_name, self.last_name)
+
     column_list = ('type', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip', 'town')
     groups_view = ['admin']
     groups_create = ['admin']
@@ -62,6 +68,10 @@ class Contact(db.Model):
     column_searchable_list = ('first_name','last_name', 'company_name', 'email', 'street')
     column_filters = ('first_name','last_name', 'company_name', 'street')
     column_default_sort = ('id', False)
+
+    @classmethod
+    def byID(self, id):
+        return self.query.filter(self.id==int(id)).first()
 
     def __str__(self):
         if(self.company_name):

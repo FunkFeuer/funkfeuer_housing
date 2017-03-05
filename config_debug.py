@@ -24,3 +24,11 @@ SECURITY_POST_REGISTER_VIEW = "/"
 # Flask-Security features
 SECURITY_REGISTERABLE = False
 SECURITY_SEND_REGISTER_EMAIL = False
+
+
+FF_HOUSING_FILES_DIR = "./files/"
+FF_HOUSING_INVOICES_BCC = "root@localhost"
+
+MAIL_SUPPRESS_SEND = True
+MAIL_DEFAULT_SENDER = "FunkFeuer <root@localhost>"
+MAIL_SERVER = "localhost"

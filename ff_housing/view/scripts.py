@@ -4,12 +4,6 @@ from ..controller import accounting
 from sqlalchemy.sql.expression import func
 
 @manager.command
-def bill_contracts():
-    app.config['SQLALCHEMY_ECHO'] = False
-    accounting.bill_contracts()
-
-
-@manager.command
 def build_uml(file='schema.png'):
     '''write model relation graph to schema.png'''
     from sqlalchemy_schemadisplay import create_uml_graph
@@ -48,10 +42,18 @@ def server_by_id(id):
     print(model.Server.byID(id))
 
 @manager.command
-def contract_bill(id):
+def contact_bill(id):
     app.config['SQLALCHEMY_ECHO'] = False
-    accounting.bill_contract(model.Contract.byID(id))
+    accounting.bill_contact(model.Contact.byID(id))
 
+@manager.command
+def generate_invoice(id):
+    app.config['SQLALCHEMY_ECHO'] = False
+    accounting.generate_invoice(model.Invoice.query.filter_by(id=int(id)).first())
+
+@manager.command
+def send_invoice(invoice):
+    accounting.send_invoice(model.Invoice.query.filter_by(id=int(invoice)).first())
 
 @manager.command
 def import_legacy(dir='data/'):
@@ -61,4 +63,20 @@ def import_legacy(dir='data/'):
     import_redeemer_csv(dir)
     import_packages(dir)
     import_cwispy_csv(dir)
-    
+    auto_close_servers()
+
+@manager.command
+def bill_all():
+    accounting.bill_all()
+    model.db.session.commit()
+
+@manager.command
+def generate_all_invoices():
+    for i in model.Invoice.query.filter_by(sent_on=None):
+        print("%s, %s for %s" % (i, str(i.amount), i.contact.email) )
+        accounting.generate_invoice(i)
+
+@manager.command
+def send_unsent_invoices():
+    accounting.send_unsent_invoices()
+    model.db.session.commit()

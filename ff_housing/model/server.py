@@ -1,6 +1,7 @@
 from sqlalchemy.orm import validates
+from sqlalchemy import event
 
-from ..model import db, User, Contact, Contract
+from ..model import db, User, Contact, Contract, insert_set_created_c
 import ipaddress
 
 
@@ -47,6 +48,7 @@ class Server(Contract):
     def __str__(self):
         return 's'+str(self.id)
 
+event.listen(Server, 'before_insert', insert_set_created_c)
 
 class IPType(db.Model):
     id = db.Column(db.Integer(), primary_key=True)

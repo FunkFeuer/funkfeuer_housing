@@ -10,18 +10,26 @@ from flask_admin import helpers as admin_helpers
 from flask_admin.base import expose
 
 from flask_script import Manager
+from flask_mail import Mail
+from flask.ext.migrate import Migrate, MigrateCommand
 
 # Create Flask application
 app = Flask(__name__)
-app.config.from_pyfile('../config.py')
+
+app.config.from_pyfile('../config_debug.py')
+app.config.from_pyfile('../config.py', silent=True)
+
 
 from .model import db
 import ff_housing.model as model
 
-# Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, model.User, model.Role)
 security = Security(app, user_datastore)
 manager = Manager(app)
+mail = Mail(app)
+
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
 
 import ff_housing.view as view
 

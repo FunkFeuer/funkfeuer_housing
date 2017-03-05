@@ -114,6 +114,12 @@ class ACLView(sqla.ModelView):
         return None
     
     @property
+    def form_excluded_columns(self):
+        if hasattr(self.model, 'form_excluded_columns'):
+            return self.model.form_excluded_columns
+        return None
+    
+    @property
     def form_rules(self):
         if hasattr(self.model, 'form_rules'):
             return self.model.form_rules
@@ -136,9 +142,15 @@ class ACLView(sqla.ModelView):
         if hasattr(self.model, 'column_default_sort'):
             return self.model.column_default_sort
         return None
-    
+
+    @property
+    def inline_models(self):
+        if hasattr(self.model, 'inline_models'):
+            return self.model.inline_models
+        return None
+
     page_size = 100
-    
+
 
 class ACLUserView(ACLView):
     column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')

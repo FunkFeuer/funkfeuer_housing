@@ -1,0 +1,181 @@
+\documentclass[a4paper, parskip=half]{scrlttr2} 
+
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc} 
+\usepackage[ngerman]{babel} 
+\usepackage{lmodern} 
+\usepackage[juratotoc]{scrjura} 
+%\usepackage[margin=2cm]{geometry} 
+%\usepackage{geometry} 
+% \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
+\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage{lastpage}
+\usepackage{fancyhdr}% headers
+\usepackage{graphicx} % logo include
+\usepackage{color} % text colors
+\usepackage{setspace}
+
+\usepackage{paratype} % font
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+% FunkFeuer Colors
+\definecolor{ff-dark}{RGB}{39,49,66}
+\definecolor{ff-grey}{RGB}{85,98,112}
+\definecolor{ff-light}{RGB}{105,145,170}
+\definecolor{ff-red}{RGB}{242,58,20}
+\definecolor{ff-green}{RGB}{161,200,32}
+
+
+
+\usepackage{wrapfig}
+
+% header
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\vspace{5pt} \includegraphics[width=3.9cm]{\VAR{templatedir}CI/funkfeuer_wien.pdf}}
+\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\\small admin@funkfeuer.at}
+}
+
+% footer
+\fancyfoot[L]{
+\begin{wrapfigure}{L}{1.6cm}
+\vspace{-15pt}
+\includegraphics[width=1.75cm]{\VAR{templatedir}CI/logo.pdf}
+\end{wrapfigure}
+\vspace{-5pt}
+}
+\fancyfoot[C]{\fontsize{7}{8} \selectfont \textcolor{ff-grey}{\\ZVR: 814804682\\UID: ATU67830859\\BIC/SWIFT: SPLSAT21\\ IBAN: AT552023000000143982}
+}
+\fancyfoot[R]{\textcolor{ff-grey}{\thepage/\pageref{LastPage}}}
+
+% lines
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\headrule}{\hbox to\headwidth{%
+  \color{ff-green}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\footrule}{\hbox to\headwidth{%
+  \color{ff-light}\leaders\hrule height \footrulewidth\hfill}}
+% section colors
+% \usepackage{sectsty} % autocolor sections
+% \chapterfont{\color{ff-grey}}  % sets colour of chapters
+% \sectionfont{\color{ff-grey}}  % sets colour of sections
+% Text color
+\color{ff-dark}
+
+
+\usepackage[T1]{fontenc}
+\usepackage{selinput}
+\SelectInputMappings{adieresis={ä},germandbls={ß}}
+\usepackage[ngerman]{babel}
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+\usepackage{numprint}
+\nprounddigits{2}
+
+\usepackage[right]{eurosym}
+
+\usepackage{datatool}
+\DTLnewdb{rechnung}
+
+\newcommand\Posten[3]{%
+  \DTLnewrow{rechnung}
+  \DTLnewdbentry{rechnung}{Bezeichnung}{#1}
+  \DTLnewdbentry{rechnung}{Anzahl}{#2}
+  \DTLnewdbentry{rechnung}{EP}{#3}
+  {\dtlexpandnewvalue
+    \FPeval\fpresult{round(#2*#3)(2)}
+    \DTLnewdbentry{rechnung}{GP}{\fpresult}
+  }
+}
+
+\newcommand\mwst{}
+\DTLsetnumberchars{}{.}
+\newenvironment{rechnung}[1]{%
+  \renewcommand\mwst{#1}%
+  \DTLcleardb{rechnung}%
+}{%
+  \DTLsumforkeys{rechnung}{GP}{\Zwischensumme}%
+  \FPeval\MWSt{round(\mwst*\Zwischensumme/100)(2)}%
+  \FPeval\Summe{round(\Zwischensumme+\MWSt)(2)}%
+  \xdef\Summe{\Summe}%
+  \par\centering
+  \begin{tabularx}{\textwidth}{Xrrr}
+    \toprule
+    Bezeichnung&Anzahl&Einzelpreis&Gesamtpreis
+    \DTLforeach*{rechnung}{\bez=Bezeichnung,\anz=Anzahl,\ep=EP,\gp=GP}{%
+      \DTLiffirstrow{\\\midrule}{\\}
+      \bez&\npnoround\numprint{\anz}\nprounddigits{2}&\numprint{\ep}&\numprint{\gp}
+    }\\
+    \midrule
+    \if\mwst0\else
+      Zwischensumme&&&\numprint{\Zwischensumme}\\
+      Mehrwertsteuer (\mwst\,\%)&&&\numprint{\MWSt}\\
+      \midrule
+    \fi
+    Summe&&&\numprint{\Summe}\\
+    \bottomrule
+  \end{tabularx}
+  \par
+}
+
+
+\usepackage{hyperref}
+
+\begin{document} 
+\thispagestyle{fancy}
+ 
+\vspace*{0.2 cm} 
+\begin{flushright}
+\footnotesize{
+FunkFeuer Wien - Verein zur Förderung freier Netze\\
+ZVR: 814804682, UID: ATU67830859\\
+ Postfach 44\\
+ 1016 Wien\\
+\href{mailto:billing@funkfeuer.at}{billing@funkfeuer.at}\\
+}
+\end{flushright}
+
+\large{
+\VAR{invoice.address|e}
+\small{\VAR{invoice.contact.email|e}}
+\vspace{2mm}
+
+\begin{flushright}
+\small{Wien, \VAR{invoice.created_at.strftime('%d.%m.%Y')|e}}
+\end{flushright}
+
+\vspace{1cm} 
+
+\Large{ \textbf{Rechnung \VAR{invoice.number|e}} }
+
+\normalsize
+\vspace{0.5cm} 
+
+\begin{rechnung}{0}
+%- for item in invoice.items
+  \Posten{\VAR{item.title|e}\hspace{0.5cm}\footnotesize{\VAR{item.detail|e}}}{\VAR{item.quantity}}{\VAR{item.unit_price}}
+%- endfor
+\end{rechnung}
+\vspace{0.5cm} 
+\normalsize
+Sofern nicht anders ausgewiesen wird gemäß UStG \S 6 Abs 1 Z 27 (Kleinunternehmerregelung) 
+keine Umsatzsteuer berechnet.\\\\
+%- if invoice.payment_type == 'SEPA-DD'
+  Der Betrag wird in den nächsten Tagen automatisch abgebucht.
+%- elif invoice.payment_type == None
+  Achtung: Bei erteiltem Einziehungsauftrag den Betrag bitte nicht Ueberweisen, dieser wird in den nächsten Tagen von Eurem Konto abgebucht!
+%- else
+  Zahlbar innerhalb von 14 Tagen nach Rechnungserhalt.
+%- endif
+\vspace{0.5cm}
+
+\textbf{Kontoverbindung:}\\
+\small
+\textbf{Inhaber:} Verein FunkFeuer Wien\\
+\textbf{BIC/SWIFT:} SPLSAT21 (Sparkasse Langenlois)\\
+\textbf{IBAN:} AT55 2023 0000 0014 3982
+
+ 
+\end{document}

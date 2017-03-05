@@ -1,28 +1,40 @@
-from ff_housing import manager, model, db
+from ff_housing import app, mail, manager, model, db
+from flask_mail import Message
 from datetime import datetime, date
 from dateutil.relativedelta import *
 from dateutil.rrule import *
 
 from ff_housing.utils import daysofmonth
+from sqlalchemy.sql.expression import func
 
-def bill_contracts():
-    for c in model.Contract.query.filter_by(closed=False):
-        bill_contract(c)
+def bill_all():
+    for contact in db.session.query(model.Contact):
+        bill_contact(contact)
+#        for c in model.Contract.query.filter_by(closed=False, billing_c = contact):
+#            print("%s:\t%s" % (c.billing_c, c))
+
+def bill_contact(contact):
+    invoice = None
+    for c in model.Contract.query.filter_by(closed=False, billing_c=contact):
+        if c.needs_billing():
+            invoice = invoice if (invoice != None) else \
+                model.Invoice(contact = c.billing_c, payment_type=c.payment_type)
+            bill_contract(c, invoice)
+
+    if (invoice != None):
+        db.session.commit()
 
 
-def bill_contract(c):
+def bill_contract(c, invoice):
     if(c.needs_billing() == False):
         return False
     print("\n%s:" % c.billing_c)
 
-    invoice = model.Invoice(contact = c.billing_c)
     db.session.add(invoice)
 
     for package in c.packages:
         if package.needs_billing():
             bill_package(package, invoice)
-
-
 
 def bill_package(package, invoice):
     if(package.needs_billing() == False):
@@ -30,7 +42,7 @@ def bill_package(package, invoice):
     amount = 0
     # next_billed - the span of this invoice element.
     next_billed = package.billed_until+relativedelta(months=+package.billing_period)
-    if (next_billed <= date.today()):
+    if (next_billed <= date.today()+relativedelta(days=-3)):
         print ("!! something fishy here: package %s next_billed (%s) is in the past!" % (package, next_billed))
         return False
 
@@ -69,4 +81,53 @@ def bill_package(package, invoice):
 
     package.last_billed = date.today()
     package.billed_until = next_billed
-    db.session.commit()
+
+
+def generate_invoice(invoice):
+    from jinja2.loaders import FileSystemLoader
+    from latex.jinja2 import make_env
+    from latex import build_pdf
+    import os
+
+    if(invoice.amount == 0):
+        return
+
+    # TODO: MWST
+
+    env = make_env(loader=FileSystemLoader('ff_housing/templates/latex/'))
+    tpl = env.get_template('invoice.tex')
+
+    pdf = build_pdf(tpl.render(invoice=invoice, templatedir=os.getcwd()+'/ff_housing/templates/latex/'))
+    path = '%sinvoices/%s.pdf' % (app.config.get('FF_HOUSING_FILES_DIR', './files/'), invoice.number)
+    pdf.save_to(path)
+    invoice.path = path
+    return(path)
+
+def send_invoice(invoice):
+    from jinja2.loaders import FileSystemLoader
+    from jinja2 import Environment
+
+    if(invoice.amount == 0):
+        return
+
+    msg = Message("Funkfeuer Housing Rechnung %s" % invoice.number,
+                  recipients=[invoice.contact.email],
+                  bcc=[app.config.get('FF_HOUSING_INVOICES_BCC')]
+                  )
+
+    print("sending %s to %s" % (invoice, invoice.contact.email) )
+
+    env = Environment(loader=FileSystemLoader('ff_housing/templates/mail/'))
+    tpl = env.get_template('invoice.txt')
+    msg.body = tpl.render(invoice=invoice)
+
+    generate_invoice(invoice)
+    with app.open_resource(".%s" % invoice.path) as fp:
+        msg.attach("%s.pdf" % invoice.number, "application/pdf", fp.read())
+
+    mail.send(msg)
+    invoice.sent_on = datetime.utcnow()
+
+def send_unsent_invoices():
+    for i in model.Invoice.query.filter_by(sent_on=None):
+        send_invoice(i)

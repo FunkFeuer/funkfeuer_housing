@@ -1,8 +1,11 @@
-from ..model import db, Contact, User
+from ..model import db, Contact, User, insert_set_created_c
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import select, func, event
-# automatic billing - job id
+from sqlalchemy import select, func, event, inspect
 from datetime import datetime, date
+import werkzeug.exceptions as exceptions
+
+
+_payment_types = db.Enum('SEPA-DD', 'money transfer', 'cash_payment', name='payment_types')
 
 class Job(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -22,13 +25,21 @@ class Invoice(db.Model):
     address = db.Column(db.Unicode(255), nullable=False)
     contact_id = db.Column(db.Integer(), db.ForeignKey(Contact.id, ondelete='RESTRICT'), nullable=False)
     contact = db.relationship(Contact, backref='invoices')
+    created_c_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'))
+    created_c = db.relationship(User, foreign_keys=[created_c_id])
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
-    path = db.Column(db.String(64))
+    cancelled = db.Column(db.Boolean(), nullable=False, default=False)
+    exported = db.Column(db.Boolean(), nullable=False, default=False)
+    payment_type = db.Column(_payment_types)
+    path = db.Column(db.String(64), default=None)
     sent_on = db.Column(db.DateTime(), default=None)
 
     @property
     def number(self):
-        return "AR%08d" % self.id
+        return "AR%02d%05d" % (self.created_at.year % 100, self.id)
+
+    def __str__(self):
+        return "Invoice %s for %s" % (self.number, self.contact)
 
     @property
     def sent(self):
@@ -44,19 +55,27 @@ class Invoice(db.Model):
                 where(InvoiceItem.invoice_id==cls.id).\
                 label('total_amount')
 
-    form_columns = ('contact',)
+    form_columns = ('contact','address', 'payment_type', 'sent_on')
     column_list = ('number', 'contact', 'amount', 'created_at', 'sent')
     groups_view = ['billing']
     groups_create = ['billing']
+    groups_edit = ['billing']
     groups_details = ['billing']
+    inline_models = ('InvoiceItem',)
 
+event.listen(Invoice, 'before_insert', insert_set_created_c)
+
+@event.listens_for(Invoice, 'before_insert')
 def Invoice_before_insert(mapper, connection, target):
-    created_at = datetime.utcnow
+    target.created_at = datetime.utcnow()
     target.address = target.contact.address
 
-# associate the listener function with SomeClass,
-# to execute during the "before_insert" hook
-event.listen(Invoice, 'before_insert', Invoice_before_insert)
+#@event.listens_for(Invoice, 'before_update')
+def Invoice_before_update(mapper, connection, target):
+    # prevent update if invoice has already been generated.
+    if(inspect(target).attrs['sent_on'].history.deleted != None and
+        inspect(target).attrs['sent_on'].history.deleted != [None]):
+        raise exceptions.Forbidden()
 
 
 class InvoiceItem(db.Model):
@@ -80,6 +99,12 @@ class InvoiceItem(db.Model):
     groups_create = ['billing']
     groups_details = ['billing']
 
+#@event.listens_for(InvoiceItem, 'before_update')
+def InvoiceItem_before_update(mapper, connection, target):
+    # prevent update if invoice has already been generated.
+    if(inspect(target.invoice).attrs['sent_on'].history.deleted != None and \
+        inspect(target.invoice).attrs['sent_on'].history.deleted != [None]):
+        raise exceptions.Forbidden()
 
 class Payment(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -107,7 +132,7 @@ class Contract(db.Model):
     created_c_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'))
     created_c = db.relationship(User, backref='created_contracts', foreign_keys=[created_c_id])
     closed = db.Column(db.Boolean(), nullable=False, default=False)
-    payment_type = db.Column(db.Enum('SEPA-DD', 'money transfer', 'cash_payment', name='payment_types'))
+    payment_type = db.Column(_payment_types)
     contracttype = db.Column(db.String(50))
     contract_state = db.Column(db.Enum('draft', 'sent', 'accepted', 'declined', 'closed', name='contract_state'), default='draft')
 
@@ -124,7 +149,7 @@ class Contract(db.Model):
                 return True
         return False
 
-    #form_columns = ('billing_c', 'contracttype')
+    form_excluded_columns = ('created_at', 'changed_at', 'created_c', 'contracttype')
     column_list = ('id', 'billing_c', 'created_at', 'changed_at')
     column_searchable_list = ('id',  'billing_c.first_name', 'billing_c.last_name', 'billing_c.company_name')
     column_default_sort = ('id', False)
@@ -140,6 +165,9 @@ class Contract(db.Model):
 
     def __str__(self):
         return 'c'+str(self.id)
+
+event.listen(Contract, 'before_insert', insert_set_created_c)
+
 
 class Package(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
