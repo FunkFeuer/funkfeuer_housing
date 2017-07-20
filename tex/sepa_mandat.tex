@@ -1,0 +1,134 @@
+\documentclass[parskip=half]{scrreprt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage[juratotoc]{scrjura}
+%\usepackage[margin=2cm]{geometry}
+%\usepackage{geometry}
+% \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
+\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage{lastpage}
+\usepackage{fancyhdr}% headers
+\usepackage{graphicx} % logo include
+\usepackage{color} % text colors
+\usepackage{setspace}
+
+\usepackage{paratype} % font
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+% FunkFeuer Colors
+\definecolor{ff-dark}{RGB}{39,49,66}
+\definecolor{ff-grey}{RGB}{85,98,112}
+\definecolor{ff-light}{RGB}{105,145,170}
+\definecolor{ff-red}{RGB}{242,58,20}
+\definecolor{ff-green}{RGB}{161,200,32}
+
+
+
+\usepackage{wrapfig}
+
+% header
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\includegraphics[width=3.9cm]{funkfeuer_wien.pdf}}
+%\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze} - ZVR: 814804682} \\
+%	\textcolor{ff-grey}{Postfach 44, 1016 Wien, Österreich}}
+%\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\ZVR: 814804682}
+\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\\small admin@funkfeuer.at}
+}
+
+% footer
+%\fancyfoot[L]{\vskip -10pt~\includegraphics[width=1.5cm]{logo.pdf}}
+% \fancyfoot[C]{\textcolor{ff-dark}{FunkFeuer Wien - ZVR: 814804682 \\Postfach 44  ·  1016 Wien \\ IBAN: AT552023000000143982  ·  BIC/SWIFT: SPLSAT21}}
+\fancyfoot[L]{
+\begin{wrapfigure}{L}{1.6cm}
+\vspace{-15pt}
+\includegraphics[width=1.75cm]{logo.pdf}
+\end{wrapfigure}
+\vspace{-5pt}
+\fontsize{7}{8} \selectfont
+\textcolor{ff-grey}{\hspace*{-1mm}Postanschrift:\\FunkFeuer Wien\\ Postfach 44\\1016 Wien}
+}
+\fancyfoot[C]{\fontsize{7}{8} \selectfont \textcolor{ff-grey}{\\ZVR: 814804682\\UID: ATU67830859\\BIC/SWIFT: SPLSAT21\\ IBAN: AT552023000000143982}
+}
+\fancyfoot[R]{\textcolor{ff-grey}{\thepage/\pageref{LastPage}}}
+
+% lines
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\headrule}{\hbox to\headwidth{%
+  \color{ff-green}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\footrule}{\hbox to\headwidth{%
+  \color{ff-light}\leaders\hrule height \footrulewidth\hfill}}
+% section colors
+\usepackage{sectsty} % autocolor sections
+\chapterfont{\color{ff-grey}}  % sets colour of chapters
+\sectionfont{\color{ff-grey}}  % sets colour of sections
+% Text color
+\color{ff-dark}
+
+%
+%	EDIT HERE
+%
+
+\input{vars.tex}
+
+\begin{document}
+
+
+\chapter*{SEPA - Lastschrift - Mandat (Ermächtigung)}
+\thispagestyle{fancy}
+
+\textbf{Mandatsreferenz}  (Kundennummer): \MandateRef \\
+\textbf{Zahlungsart}: Wiederkehrender Einzug\\
+\addsec{Zahlungsempfänger}
+
+\begin{tabular}{p{15cm}p{0.5cm}l}
+FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
+Postfach 44 \\
+1016 Wien
+\end{tabular}%
+
+\vspace{0,5 cm}
+
+\begin{contract}
+Ich ermächtige/Wir ermächtigen FunkFeuer Wien (Creditor ID AT44ZZZ00000045801) Zahlungen von meinem/unserem Konto mittels SEPA - Lastschrift einzuziehen. Zugleich weise ich mein/unser Kreditinstitut an, die von FunkFeuer Wien auf mein/ unser Konto gezogenen SEPA – Lastschriften einzulösen.\\ \\
+Ich kann/Wir können innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. Es gelten dabei die mit meinem/ unserem Kreditinstitut vereinbarten Bedingungen.
+\end{contract}
+
+\addsec{Zahlungspflichtiger}
+
+\begin{tabular}{p{2cm}p{.5cm}l}
+Name\\ \\
+Anschrift\\ \\
+\end{tabular}
+\hfill
+\begin{tabular}{p{13cm}p{.5cm}l}
+\dotfill \\ \\
+\dotfill \\ \\
+\end{tabular}
+
+\begin{tabular}{p{9cm}p{.5cm}l}
+IBAN \dotfill
+\end{tabular}
+\hfill
+\begin{tabular}{p{4cm}p{.5cm}l}
+BIC \dotfill
+\end{tabular}
+
+
+
+\vspace{1,5 cm}
+\begin{tabular}{p{7cm}p{.5cm}l}
+\dotfill \\
+Ort, Datum
+\end{tabular}
+\hfill
+\begin{tabular}{p{7cm}p{.5cm}l}
+\dotfill \\
+Unterschrift
+\end{tabular}
+
+\end{document}

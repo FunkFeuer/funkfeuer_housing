@@ -1,0 +1,296 @@
+\documentclass[parskip=half]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage[juratotoc]{scrjura}
+%\usepackage[margin=2cm]{geometry}
+%\usepackage{geometry}
+% \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
+\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage{lastpage}
+\usepackage{fancyhdr}% headers
+\usepackage{graphicx} % logo include
+\usepackage{color} % text colors
+\usepackage{setspace}
+
+\usepackage{paratype} % font
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+% FunkFeuer Colors
+\definecolor{ff-dark}{RGB}{39,49,66}
+\definecolor{ff-grey}{RGB}{85,98,112}
+\definecolor{ff-light}{RGB}{105,145,170}
+\definecolor{ff-red}{RGB}{242,58,20}
+\definecolor{ff-green}{RGB}{161,200,32}
+
+
+
+\usepackage{wrapfig}
+
+% header
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\includegraphics[width=3.9cm]{funkfeuer_wien.pdf}}
+%\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze} - ZVR: 814804682} \\
+%	\textcolor{ff-grey}{Postfach 44, 1016 Wien, Österreich}}
+%\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\ZVR: 814804682}
+\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\\small admin@funkfeuer.at}
+}
+
+% footer
+%\fancyfoot[L]{\vskip -10pt~\includegraphics[width=1.5cm]{logo.pdf}}
+% \fancyfoot[C]{\textcolor{ff-dark}{FunkFeuer Wien - ZVR: 814804682 \\Postfach 5 · 1096 Wien \\ IBAN: AT552023000000143982 · BIC/SWIFT: SPLSAT21}}
+\fancyfoot[L]{
+\begin{wrapfigure}{L}{1.6cm}
+\vspace{-15pt}
+\includegraphics[width=1.75cm]{logo.pdf}
+\end{wrapfigure}
+\vspace{-5pt}
+\fontsize{7}{8} \selectfont
+\textcolor{ff-grey}{\hspace*{-1mm}Postanschrift:\\FunkFeuer Wien\\ Postfach 44\\1016 Wien}
+}
+\fancyfoot[C]{\fontsize{7}{8} \selectfont \textcolor{ff-grey}{\\ZVR: 814804682\\UID: ATU67830859\\BIC/SWIFT: SPLSAT21\\ IBAN: AT552023000000143982}
+}
+\fancyfoot[R]{\textcolor{ff-grey}{\thepage/\pageref{LastPage}}}
+
+% lines
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\headrule}{\hbox to\headwidth{%
+ \color{ff-green}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\footrule}{\hbox to\headwidth{%
+ \color{ff-light}\leaders\hrule height \footrulewidth\hfill}}
+% section colors
+\usepackage{sectsty} % autocolor sections
+\chapterfont{\color{ff-grey}} % sets colour of chapters
+\sectionfont{\color{ff-grey}} % sets colour of sections
+% Text color
+\color{ff-dark}
+
+%
+%	EDIT HERE
+%
+
+\input{vars.tex}
+
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+
+\begin{document}
+\thispagestyle{fancy}
+\section*{\\Allgemeine Geschäftsbedingungen für den Serverbereich \\ des
+Projektes housing.funkfeuer.at}
+
+\subsection{Umfang und Geltungsbereich}
+\begin{enumerate}
+\item Die allgemeinen Geschäfts- und Lieferbedingungen vom Projekt
+housing.funkfeuer.at gelten für alle Dienstleistungen und Lieferungen, die das
+Projekt housing.funkfeuer.at dem Auftraggeber gegenüber erbringt. Sie gelten
+auch für alle zukünftigen Verträge, selbst wenn nicht ausdrücklich darauf
+Bezug genommen wird.
+\item In Ergänzung der Allgemeinen Geschäfts- und Lieferbedingungen vom
+2.3.2006 gelten die Allgemeinen Bedingungen für Dienstleistungen in der
+Informationsverarbeitung durch Rechenzentren, herausgegeben vom Fachverband
+Unternehmensberatung und Datenverarbeitung, Wirtschaftskammer Oesterreich,
+in der aktuellen Fassung.
+\end{enumerate}
+
+\subsection{ Rechtsvorschriften}
+\begin{enumerate}
+\item Der Vertragspartner verpflichtet sich, die österreichischen Gesetze auch im
+internationalen Datenverkehr über das Projekt housing.funkfeuer.at einzuhalten und
+bemerkte Gesetzesverstoesse dem Projekt housing.funkfeuer.at zu melden.
+\item Der Vertragspartner verpflichtet sich weiters, bei Verstößen gegen österreichische
+oder internationale Gesetze (wie insbesondere dem Telekommunikationsgesetz, dem
+Mediengesetz, dem Verbotsgesetz, dem Pornographiegesetz, dem Urheberrechtsgesetz,
+dem Strafgesetzbuch), das Projekt housing.funkfeuer.at von jedem Nachteil freizuhalten,
+der durch von Vertragspartnern übermittelnden, verbreitenden oder ausgestellten Daten
+und Nachrichten entsteht, und das Projekt housing.funkfeuer.at schad- und klaglos zu
+halten.
+\item Der Vertragspartner ist verschuldensunabhängig verantwortlich für sämtliche
+Aktivitaeten, die von seinem Anschluss ausgehen und das Projekt housing.funkfeuer.at für
+sämtliche entstehenden Schäden schad und klaglos halten. Von der vollkommenen Schad- und
+Klagloshaltung sind insbesondere auch zu zahlende Strafen welcher Art auch immer und die
+Kosten einer zweckentsprechenden Rechtsverteidigung erfasst.
+\end{enumerate}
+
+\subsection{Vertragsbeginn und Vertragsdauer}
+\begin{enumerate}
+\item Eine Kündigung beider Vertragspatner ist jeweils unter Einhaltung einer 14 tägigen
+Kündigungsfrist möglich.
+\item Die in Katalogen, Aussendungen und dergleichen enthaltenen Angaben sind nur
+massgeblich, wenn in der Auftragsbestätigung ausdrücklich auf sie Bezug genommen
+wird.
+\end{enumerate}
+
+\subsection{Entgeltentrichtung}
+\begin{enumerate}
+\item Pro Monat ist ein im Nutzungsvertrag festgelegter Unkostenbeitrag zu entrichten. Mit dem
+Betrag bezahlt das Projekt housing.funkfeuer.at die Betriebskosten, bestehend aus
+Stromkosten, Wartungskosten, Infrastrukturkosten und Leitungskosten.
+\end{enumerate}
+
+\subsection{ Haftungsausschluss}
+\begin{enumerate}
+\item Das Projekt housing.funkfeuer.at haftet für Schäden ausserhalb des
+Anwendungsbereiches des Produkthaftungsgesetzes nur, sofern ihm Vorsatz oder grobe
+Fahrlässigkeit nachgewiesen werden, im Rahmen der gesetzlichen Vorschriften. Die
+Haftung für leichte Fahrlaessigkeit, der Ersatz von Folgeschäden und Vermoegensschäden, nicht erzielten Ersparnissen, entgangenem Gewinn, verlorengegangene Daten, Zinsverlusten und
+von Schäden aus Ansprüchen Dritter gegen den Vertragspartnern sind ausgeschlossen. Insbesondere sind jegliche Ansprüche bei Ausfall von Datenleitungen oder der Projekthousing.funkfeuer.at Server ausgeschlossen.
+\item Das Projekt housing.funkfeuer.at haftet nicht für Inhalt, Vollständigkeit, Richtigkeit usw.
+übermittelter oder abgefragter Daten und für Daten, die über das Projekt
+housing.funkfeuer.at erreichbar sind.
+\item Das Projekt housing.funkfeuer.at übernimmt keine Gewähr, dass die angebotenen
+Dienste immer zugänglich sind und dass auf den Rechnern vom Projekt
+housing.funkfeuer.at gespeicherte Daten immer erhalten bleiben.
+\item Das Projekt housing.funkfeuer.at behält sich das Recht vor, einzelne öffentlich
+zugängliche Angebote zu sperren, wenn dies Rechtsvorschriften erfordern. Oder wenn es
+zur Aufrechterhaltung des störungsfreien Betriebs erforderlich ist.
+\item Das Projekt housing.funkfeuer.at übernimmt keine Haftung für Schäden, die durch
+eine erforderliche, aber nicht erteilte fernmeldebehoerdliche Bewilligung oder andere
+behördliche Genehmigungen oder durch erforderliche, aber nicht erteilte privatrechtliche
+Genehmigungen oder Zustimmung Dritter entstehen.
+\end{enumerate}
+
+\subsection{ Datenschutz}
+\begin{enumerate}
+\item Das Projekt housing.funkfeuer.at ist berechtigt, Verbindungsdaten, insbesondere Source-
+und Destination-IP und sämtliche anderen Logfiles neben der Auswertung für
+Verrechnungszwecke, zum Schutz der eigenen Rechner und der von Dritten, zu speichern
+und auszuwerten. Weiters dürfen diese Daten zur Behebung technischer Maengel
+verwendet werden.
+\item Das Projekt housing.funkfeuer.at ist berechtigt, Stammdaten der Vertragspartnern und
+Teilnehmer, wie Titel, Vornamen, Nachnamen, Geburtsdatum, Firma, Adresse, Branche,
+Bankverbindung, E-Mail Adresse, Anfragedatum, schriftlich geregelte übereinkünfte
+speichern. Diese Stammdaten werden automationsunterstützt verarbeitet und ohne
+schriftliche Zustimmung des Teilnehmers nicht weitergegeben. Entsprechend der in dem
+Paragraph 96 Telekommunikationsgesetz (TKG) normierten Verpflichtung erstellt das
+Projekt housing.funkfeuer.at ein auf Web basierendes Teilnehmerverzeichnis, in dem der
+Vertragspartner Vor- und Familienname, Titel, Berufsbezeichnung, Adresse, E-Mail-Adresse
+und weitere Daten eintragen kann. Auf Wunsch des Vertragspartnern kann diese
+Eintragung unterbleiben. Über das technisch notwendige Mindestmass werden
+Inhaltsdaten jedoch nicht gespeichert und keinesfalls ausgewertet. Das Projekt
+housing.funkfeuer.at ist berechtigt, Access-Statistiken zu führen.
+\item Das Projekt housing.funkfeuer.at ergreift alle technisch möglichen Massnahmen, um die
+bei ihm gespeicherten Vertragspartnerndaten zu schützen. Das Projekt
+housing.funkfeuer.at haftet jedoch nicht, wenn sich Dritte auf rechtswidrige Art und Weise
+diese Daten in ihre Verfügungsgewalt bringen und sie weiterverwenden. Die
+Geltendmachung von Schäden der Vertragspartei oder Dritter gegenüber dem Projekt
+housing.funkfeuer.at aus einem derartigen Zusammenhang wird einvernehmlich
+ausgeschlossen.
+\end{enumerate}
+
+\subsection{Software}
+\begin{enumerate}
+\item für Software, die als eFreeware, ePublic Domain, eDemo oder als eShareware
+klassifiziert ist, übernimmt das Projekt housing.funkfeuer.at keine wie immer geartete
+Gewähr. Die vom jeweiligen Programmautor für diese Software angegebenen
+Nutzungsbestimmungen oder allfaellige Lizenzregelungen sind zu beachten.
+\item Das Projekt housing.funkfeuer.at übernimmt keine Gewähr dafür, dass die Software
+jederzeit und fehlerfrei funktioniert und mit anderen Programmen oder
+Hardwarezusammensetzungen zusammenarbeitet.
+\end{enumerate}
+
+\subsection{IP-Vergabe}
+\begin{enumerate}
+\item Der vom Projekt housing.funkfeuer.at zugewiesene IP Bereich darf nur vom Auftraggeber
+(Endbenutzer) genutzt werden. Die Weitergabe an Dritte ist weder zur Gänze noch zu
+Teilen möglich. Das Projekt housing.funkfeuer.at behält sich das Recht, IP Adressen an
+Dritte weiterzugeben, vor.
+\item Die IP Adressen dürfen nur während eines aufrechten Vertrages mit dem Projekt
+housing.funkfeuer.at genutzt werden. Endet das Vertragsverhältnis, aus welchem Grunde
+auch immer, sind die IP Adressen an das Projekt housing.funkfeuer.at zurückzugeben.
+\item Das Projekt housing.funkfeuer.at ist bei der Vergabe von IP Adressen an internationale
+Richtlinien gebunden. Somit gilt insbesondere:
+\begin{enumerate}
+\item Pro Jahr und Benutzer kann nur eine bestimmte IP Adressen Anzahl vergeben werden.
+\item Sollten sich von Benutzer angegebene Informationen als ungültig herausstellen, ist die
+Zuweisung nicht länger gültig.
+\item IP-Adressen dürfen nicht auf Vorrat registriert werden.
+\end{enumerate}
+\item Es kann auf Grund von technischer Notwendigkeit vorkommen, dass ein zugewiesener
+Adressbereich durch einen anderen ersetzt werden muss. Das Projekt housing.funkfeuer.at
+kann daher die Verwendung von bestimmten IP Adressen nicht garantieren.
+\end{enumerate}
+
+\subsection{ Rücktritt}
+\begin{enumerate}
+\item[] Das Projekt housing.funkfeuer.at ist berechtigt, vom Vertrag zurückzutreten, wenn
+\item\begin{enumerate}
+\item der Nutzer einen im Verhaeltnis zu dem mit ihm vereinbarten Datenvolumen
+überproportionalen Datentransfer aufweist oder der Nutzer Dienste übermässig in
+Anspruch nimmt;
+\item der Nutzer wiederholt gegen die eNetiquettee und die allgemein akzeptierten Standards
+der Netzbenutzung verstößt, wie auch durch ungebetenes Werben und Spamming
+(aggressives Direct-Mailing), die Benutzung des Dienstes zur übertragung von
+Drohungen, Obszoenitäten, Belästigungen oder zur Schädigung anderer Teilnehmer.
+\end{enumerate}
+\item Unbeschadet der Schadenersatzansprüche vom Projekt housing.funkfeuer.at sind im
+Falle des Rücktritts bereits erbrachte Leistungen oder Teilleistungen vertragsgemäß
+abzurechnen und zu bezahlen.
+\end{enumerate}
+
+\subsection{Nettiquette}
+\begin{enumerate}
+\item Der Vertragspartner verpflichtet sich, die international ueblichen Verhaltensregeln einzuhalten: \\
+Ärgere andere Netzteilnehmer nicht übermaessig und ärgere dich über andere
+Netzteilnehmer nicht übermässig. Sollten aus dem Internet diesbezueglich Beschwerden über
+den Vertragspartner an das Projekt housing.funkfeuer.at herangetragen werden, so ist das Projekt
+housing.funkfeuer.at im Wiederholungsfall berechtigt, das Vertragsverhältnis aufzulösen.
+\item Bei Zuwiderhandeln kann das Projekt housing.funkfeuer.at den Zugang des
+Vertragspartners ohne Angabe von Gründen und ohne vorherige Information des
+Vertragspartners sperren.
+\end{enumerate}
+
+\subsection{ Änderungen der Allgemeinen Geschäftsbedingungen und der Entgelte}
+\begin{enumerate}
+\item[] Änderungen der Allgemeinen Geschaeftsbestimmungen und der Entgelte werden dem
+Vertragspartnern schriftlich (per E-Mail) mitgeteilt. Die Änderungen gelten als akzeptiert,
+wenn der Vertragspartner diesen nicht innerhalb von 30 Tagen nach Aussendung der
+Mitteilung schriftlich (per E-Mail) widerspricht. Der Widerspruch gilt als Kündigung.
+\end{enumerate}
+
+\subsection{ Sonstige Bestimmungen}
+\begin{enumerate}
+\item Alle dieses Vertragsverhältnis betreffenden Änderungen, Ergänzungen, Mitteilungen
+und Erklärungen sind nur gültig, wenn sie schriftlich oder per E-Mail erfolgen bei
+sonstiger Unwirksamkeit. Mündliche Nebenabreden bestehen nicht.
+\item Digitale Unterschriften vom Projekt housing.funkfeuer.at werden als rechtsgültig
+anerkannt.
+\item Das Projekt housing.funkfeuer.at ist auf eigenes Risiko ermächtigt, andere
+Unternehmen mit der Erbringung von Leistungen aus diesem Vertragsverhältnis zu
+beauftragen.
+\item Der Vertragspartner wird Änderungen seines Namens oder der Bezeichnung, die er
+beim Projekt housing.funkfeuer.at angegeben hat, sowie jede Änderung seiner Anschrift
+(Sitzverlegung) oder seiner Rechtsform sofort, spätestens jedoch innerhalb eines Monats
+ab der Änderung anzeigen. Gibt der Vertragspartner solche Änderungen nicht bekannt
+und gehen ihm deshalb an die von ihm zuletzt bekanntgegebene Anschrift gesandte,
+rechtlich bedeutsame Erklaerungen vom Projekt housing.funkfeuer.at, insbesondere
+Rechnungen, Mahnungen oder Kündigungen nicht zu, so gelten diese Erklärungen vom
+Projekt housing.funkfeuer.at trotzdem als zugegangen.
+\item Der Vertrag bleibt auch bei rechtlicher Unwirksamkeit einzelner Regelungen und
+Bedingungen in seinen übrigen Teilen wirksam. Das gilt nicht, wenn in diesem Falle das
+Festhalten an dem Vertrag eine unzumutbare Härte für eine Vertragspartei darstellen
+würde.
+\item Der Vertragspartner verpflichtet sich, seinen Zugang zum Projekt housing.funkfeuer.at
+und die damit verbundenen Dienstleistungen nicht an Dritte weiterzugeben und sein
+Passwort geheim zu halten. Für Schäden, die durch mangelhafte Geheimhaltung der
+Passwörter durch den Vertragspartner oder durch Weitergabe an Dritte entstehen, haftet
+dieser. Vergessene Zugangs-Passwörter werden vom Projekt housing.funkfeuer.at auf
+Verlangen unentgeltlich durch neue ersetzt. Jeder Verdacht einer unerlaubten Benutzung
+seines Zuganges durch Dritte muss dem Projekt housing.funkfeuer.at sofort gemeldet
+werden.
+\item für die Kommunikation zwischen Vertragspartnern und dem Projekt housing.funkfeuer.at ist,
+soweit möglich, E-Mail zu verwenden.
+\end{enumerate}
+
+\subsection{ Gerichtsstand}
+\begin{enumerate}
+\item Als Gerichtsstand gilt Wien als vereinbart, ausser bei Klagen gegen Verbraucher im Sinne
+des Konsumentenschutzgesetzes, die ihren Wohnsitz oder gewöhnlichen Aufenthalt im
+Inland haben oder im Inland beschäftigt sind. Es gilt ausschließlich österreichisches Recht.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,149 @@
+\documentclass[parskip=half]{scrreprt}
+
+\usepackage{pdfpages}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage[juratotoc]{scrjura}
+%\usepackage[margin=2cm]{geometry}
+%\usepackage{geometry}
+% \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
+\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage{lastpage}
+\usepackage{fancyhdr}% headers
+\usepackage{graphicx} % logo include
+\usepackage{color} % text colors
+\usepackage{setspace}
+
+\usepackage{paratype} % font
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+% FunkFeuer Colors
+\definecolor{ff-dark}{RGB}{39,49,66}
+\definecolor{ff-grey}{RGB}{85,98,112}
+\definecolor{ff-light}{RGB}{105,145,170}
+\definecolor{ff-red}{RGB}{242,58,20}
+\definecolor{ff-green}{RGB}{161,200,32}
+
+
+\usepackage{wrapfig}
+
+% header
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\includegraphics[width=3.9cm]{funkfeuer_wien.pdf}}
+%\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze} - ZVR: 814804682} \\
+%	\textcolor{ff-grey}{Postfach 44, 1016 Wien, Österreich}}
+%\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\ZVR: 814804682}
+\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\\small admin@funkfeuer.at}
+}
+
+% footer
+%\fancyfoot[L]{\vskip -10pt~\includegraphics[width=1.5cm]{logo.pdf}}
+% \fancyfoot[C]{\textcolor{ff-dark}{FunkFeuer Wien - ZVR: 814804682 \\Postfach 5  ·  1096 Wien \\ IBAN: AT552023000000143982  ·  BIC/SWIFT: SPLSAT21}}
+\fancyfoot[L]{
+\begin{wrapfigure}{L}{1.6cm}
+\vspace{-15pt}
+\includegraphics[width=1.75cm]{logo.pdf}
+\end{wrapfigure}
+\vspace{-5pt}
+\fontsize{7}{8} \selectfont
+\textcolor{ff-grey}{\hspace*{-1mm}Postanschrift:\\FunkFeuer Wien\\ Postfach 44\\ 1016 Wien}
+}
+\fancyfoot[C]{\fontsize{7}{8} \selectfont \textcolor{ff-grey}{\\ZVR: 814804682\\UID: ATU67830859\\BIC/SWIFT: SPLSAT21\\ IBAN: AT552023000000143982}
+}
+%\fancyfoot[R]{\textcolor{ff-grey}{\thepage/\pageref{LastPage}}}
+\fancyfoot[R]{\textcolor{ff-grey}{\thepage/2}}
+
+% lines
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\headrule}{\hbox to\headwidth{%
+  \color{ff-green}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\footrule}{\hbox to\headwidth{%
+  \color{ff-light}\leaders\hrule height \footrulewidth\hfill}}
+% section colors
+\usepackage{sectsty} % autocolor sections
+\chapterfont{\color{ff-grey}}  % sets colour of chapters
+\sectionfont{\color{ff-grey}}  % sets colour of sections
+% Text color
+\color{ff-dark}
+
+%
+%	EDIT HERE
+%
+
+\input{vars.tex}
+
+\begin{document}
+\small
+\chapter*{Nutzungsvertrag Serverhousing Stellplatz}
+\thispagestyle{fancy}
+\textbf{Gehäuseformat Embedded Board\\ \\
+Kundennummer: \CustomerNo \\
+Servernummer: \ServerNo
+}
+
+\vspace{0.5cm}
+Abgeschlossen zwischen
+
+\begin{tabular}{p{15cm}p{0.5cm}l}
+FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
+Postfach 44 \\
+1016 Wien
+\end{tabular}
+
+als Projekt housing.funkfeuer.at einerseits und
+
+\begin{tabular}{p{15cm}p{0.5cm}l}
+\CustomerName\\
+\CustomerStreet\\
+\CustomerCity
+\end{tabular}
+
+als Serverbetreiber andererseits wie folgt:
+%\vspace{0.5cm}
+
+\begin{contract}
+   \begin{enumerate}
+\item Der Serverbetreiber ist alleinig für den Inhalt auf seinem Rechner verantwortlich.
+\item Der Serverbetreiber stellt sicher, dass der Betrieb des Servers und darauf laufende Dienste geltendes österreichisches Recht nicht verletzen.
+\item Der Serverbetreiber hat einen elektrischen Leistungsbezug und eine Datenmenge nach dem Fair Use Prinzip. Für die faire Verteilung der Leistungen sind Geräte mit 5 Volt (via Micro USB Anschluss) und maximal 8 Watt Leistungsaufnahme und 100 GB Datenverbrauch wünschenswert. Zusätzlich Datenmengen können nur in Absprache mit der Leitung des Projektes housing.funkfeuer.at vereinbart werden.
+\item Für den Einbau ist das Embedded Board in einem Gehäuse zu verbauen welches für den dauerhaften Betrieb geeignet ist. Es kann desweiteren ein externer Datenträger (z.B. 2.5" HDD oder SSD) mit verbaut werden. Es steht eine Gesamtfläche von 70x100x100mm (Breite, Tiefe, Höhe) zur Verfügung.
+\item Für den Leistungsbezug sind 5 Euro Unkostenbeitrag pro Monat zu bezahlen. Der Betrag ist per Einziehungsauftrag 12 Monate im Voraus zu entrichten. Bei Zahlungsverzug von über zwei Wochen ist das Projekt housing.funkfeuer.at berechtigt, die Leistungen einzustellen. Die offenen Forderungen bleiben bestehen.
+\item Der Serverbetreiber hat nach Terminvereinbarung uneingeschränkten Zugang zu seinem Rechner. Einstellen und Abholen werden präferiert via Post erledigt indem das Embedded Board an die Postanschrift des Vereins gesendet wird und beim nächstmöglichen Termin eingebaut wird.
+\item Der Serverbetreiber bestätigt dass er die AGBs des Projektes housing.funkfeuer.at zur Kenntnis genommen hat, und sie uneingeschränkt akzeptiert.
+\item Der Serverbetreiber bekommt eine öffentliche weltweit zugängliche IP Adresse zugeteilt. Es gibt keine Einschränkung von Serverdiensten, jedoch ist das in Punkt 3 erwähnte Fair Use Prinzip einzuhalten. Letzteres gilt besonders für Peer-to-Peer Dienste, wie Bit Torrent.
+\item Der Serverbetreiber sorgt dafür, dass sein Rechner automatisch hochfahren kann.
+\item Das Projekt housing.funkfeuer.at haftet keinesfalls, weder bei Datenverlust noch für die Hardware, auch nicht falls dies durch den laufenden Betrieb des Projektes housing.funkfeuer.at verursacht wurde.
+\item Dieser Vertrag kann jeweils zum Ende von 12 Monaten, unter Einhaltung einer vierwöchigen Kündigungsfrist, gekündigt werden.
+\end{enumerate}
+\end{contract}
+
+\vspace{0.5 cm}
+\begin{tabular}{p{7cm}p{.5cm}l}
+\dotfill \\
+Serverbetreiber
+\end{tabular}
+\hfill
+\begin{tabular}{p{7cm}p{.5cm}l}
+\dotfill \\
+Wolfgang Nagele (Obmann)
+\end{tabular}
+
+\vspace{0.5cm}
+\begin{tabular}{p{7cm}p{.5cm}l}
+\dotfill \\
+Ort, Datum
+\end{tabular}
+\hfill
+\begin{tabular}{p{7cm}p{.5cm}l}
+\dotfill \\
+Matthias Šubik (Schriftführer)
+\end{tabular}
+
+\includepdf[pages=-]{sepa_mandat.pdf}
+
+\end{document}
