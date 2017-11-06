@@ -1,12 +1,8 @@
 Liebe(r) {{ invoice.contact.name }}!
 
-Diese Rechnung kommt erst recht spät (am Ende anstatt wie gewohnt Anfang 
-des Monats), da wir im letzten Monat fieberhaft an unserem neuen 
-Buchhaltungssystem gearbeitet haben.
 
-Dafür findet sich im Anhang findet sich deine aktuelle Rechnung 
-nun endlich als PDF!
 
+Im Anhang findest Du Deine aktuelle Rechnung {{ invoice.number }}.
 
 
 Bei Rückfragen stehen wir jederzeit gerne unter billing@funkfeuer.at zur 

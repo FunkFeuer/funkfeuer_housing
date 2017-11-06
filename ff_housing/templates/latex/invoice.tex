@@ -85,7 +85,7 @@
   \DTLnewdbentry{rechnung}{Anzahl}{#2}
   \DTLnewdbentry{rechnung}{EP}{#3}
   {\dtlexpandnewvalue
-    \FPeval\fpresult{round(#2*#3)(2)}
+    \FPeval\fpresult{round(#2*(#3))(2)}
     \DTLnewdbentry{rechnung}{GP}{\fpresult}
   }
 }
