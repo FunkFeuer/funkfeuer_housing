@@ -11,7 +11,7 @@ from flask_admin.base import expose
 
 from flask_script import Manager
 from flask_mail import Mail
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate, MigrateCommand
 
 # Create Flask application
 app = Flask(__name__)
@@ -49,7 +49,7 @@ admin = flask_admin.Admin(
 admin.add_view(view.UserEditView(model.User, db.session, endpoint="profile"))
 
 # admin.add_view(view.UserServerView(model.Server, db.session, name='My Servers', endpoint="servers", menu_icon_type='glyph', menu_icon_value='glyphicon-tasks'))
-admin.add_view(view.ContractView(model.Server, db.session, category='Admin', name='Servers'))
+admin.add_view(view.ServerView(model.Server, db.session, category='Admin', name='Servers'))
 admin.add_view(view.ACLView(model.IP, db.session, category='Admin', name='IPs'))
 admin.add_view(view.ACLView(model.User, db.session, category='Admin', name='Users'))
 admin.add_view(view.ACLView(model.Contact, db.session, category='Admin', name='Contacts'))

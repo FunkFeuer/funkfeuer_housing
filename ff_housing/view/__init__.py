@@ -46,15 +46,15 @@ class AdminUserView(AdminView):
     column_display_pk = True
     column_hide_backrefs = False
     column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
-    
+
     @property
     def can_edit(self):
         return current_user.has_role('superuser')
-    
+
     @property
     def can_delete(self):
         return current_user.has_role('superuser')
-    
+
     @property
     def can_create(self):
         return current_user.has_role('superuser')
@@ -62,7 +62,7 @@ class AdminUserView(AdminView):
 
 
 class ACLView(sqla.ModelView):
-    
+
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
             return False
@@ -76,67 +76,67 @@ class ACLView(sqla.ModelView):
                 abort(403)
             else:
                 return redirect(url_for('security.login', next=request.url))
-    
+
     @property
     def can_edit(self):
-        if hasattr(self.model, 'groups_edit'):
+        if hasattr(self.model, 'groups_edit') and current_user:
             return bool(set(self.model.groups_edit) & set(current_user.roles))
         return False
-    
+
     @property
     def can_delete(self):
-        if hasattr(self.model, 'groups_delete'):
+        if hasattr(self.model, 'groups_delete') and current_user:
             return bool(set(self.model.groups_delete) & set(current_user.roles))
         return False
-    
+
     @property
     def can_create(self):
-        if hasattr(self.model, 'groups_create'):
+        if hasattr(self.model, 'groups_create') and current_user:
             return bool(set(self.model.groups_create) & set(current_user.roles))
         return False
-    
+
     @property
     def can_view_details(self):
-        if hasattr(self.model, 'groups_details'):
+        if hasattr(self.model, 'groups_details') and current_user:
             return bool(set(self.model.groups_details) & set(current_user.roles))
         return False
-    
+
     @property
     def column_list(self):
         if hasattr(self.model, 'column_list'):
             return self.model.column_list
         return None
-    
+
     @property
     def form_columns(self):
         if hasattr(self.model, 'form_columns'):
             return self.model.form_columns
         return None
-    
+
     @property
     def form_excluded_columns(self):
         if hasattr(self.model, 'form_excluded_columns'):
             return self.model.form_excluded_columns
         return None
-    
+
     @property
     def form_rules(self):
         if hasattr(self.model, 'form_rules'):
             return self.model.form_rules
         return None
-    
+
     @property
     def column_filters(self):
         if hasattr(self.model, 'column_filters'):
             return self.model.column_filters
         return None
-    
+
     @property
     def column_searchable_list(self):
         if hasattr(self.model, 'column_searchable_list'):
             return self.model.column_searchable_list
         return None
-    
+
     @property
     def column_default_sort(self):
         if hasattr(self.model, 'column_default_sort'):
@@ -154,7 +154,7 @@ class ACLView(sqla.ModelView):
 
 class ACLUserView(ACLView):
     column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
-    
+
 class InvoiceView(ACLView):
     inline_models = (model.InvoiceItem,)
 
@@ -178,7 +178,7 @@ class UserEditView(sqla.ModelView):
     can_delete = False
     can_create = False
     can_view_details = False
-    
+
     def edit_view(self):
         pass
     def create_view(self):
@@ -194,7 +194,7 @@ class UserEditView(sqla.ModelView):
         if current_user.is_active and current_user.is_authenticated:
             return True
         return False
-    
+
     form_columns = ('first_name', 'last_name', 'company_name', 'street', 'zip', 'town', 'country', 'phone')
 
     @expose('/', methods=('GET', 'POST'))
@@ -247,4 +247,21 @@ class UserEditView(sqla.ModelView):
                            form=form,
                            form_opts=form_opts,
                            return_url=return_url)
-    
+
+
+class ServerIPQueryAjaxModelLoader(sqla.ajax.QueryAjaxModelLoader):
+	def get_list(self, query, offset=0, limit=20):
+		filters = list(
+			field.ilike(u'%%%s%%' % query) for field in self._cached_fields
+		)
+		filters.append(model.IP.server == None)
+		return (
+			db.session.query(model.IP)
+			.filter(*filters)
+			.all()
+		)
+
+class ServerView(ContractView):
+	form_ajax_refs = {
+		'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
+	}
