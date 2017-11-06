@@ -25,9 +25,11 @@ def bill_contact(contact):
         db.session.commit()
 
 
-def bill_contract(c, invoice):
+def bill_contract(c, invoice = None):
     if(c.needs_billing() == False):
         return False
+    invoice = invoice if (invoice != None) else \
+    model.Invoice(contact = c.billing_c, payment_type=c.payment_type)
     print("\n%s:" % c.billing_c)
 
     db.session.add(invoice)
@@ -35,6 +37,7 @@ def bill_contract(c, invoice):
     for package in c.packages:
         if package.needs_billing():
             bill_package(package, invoice)
+    db.session.commit()
 
 def bill_package(package, invoice):
     if(package.needs_billing() == False):
@@ -42,10 +45,10 @@ def bill_package(package, invoice):
     amount = 0
     # next_billed - the span of this invoice element.
     next_billed = package.billed_until+relativedelta(months=+package.billing_period)
-    if (next_billed <= date.today()+relativedelta(days=-3)):
+    if (next_billed <= date.today()+relativedelta(days=-30)):
         print ("!! something fishy here: package %s next_billed (%s) is in the past!" % (package, next_billed))
         return False
-
+    
     # TODO: only bill until closed_date if closed_date
 
     # we iterate over a list of montly dates between billed_until and next_billed
@@ -89,14 +92,15 @@ def generate_invoice(invoice):
     from latex import build_pdf
     import os
 
-    if(invoice.amount == 0):
+    if(len(invoice.items) == 0):
+        # skip invoices without items
         return
 
     # TODO: MWST
 
     env = make_env(loader=FileSystemLoader('ff_housing/templates/latex/'))
     tpl = env.get_template('invoice.tex')
-
+    
     pdf = build_pdf(tpl.render(invoice=invoice, templatedir=os.getcwd()+'/ff_housing/templates/latex/'))
     path = '%sinvoices/%s.pdf' % (app.config.get('FF_HOUSING_FILES_DIR', './files/'), invoice.number)
     pdf.save_to(path)
@@ -107,7 +111,8 @@ def send_invoice(invoice):
     from jinja2.loaders import FileSystemLoader
     from jinja2 import Environment
 
-    if(invoice.amount == 0):
+    if(len(invoice.items) == 0):
+        # skip invoices without items
         return
 
     msg = Message("Funkfeuer Housing Rechnung %s" % invoice.number,
