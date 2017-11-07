@@ -50,15 +50,19 @@ setup(
     install_requires=[
         "Flask",
         "Flask-Admin",
+        "flask-security",
+        "flask-migrate",
         "Flask-Login>=0.3.0,<0.4",
-        "Flask-security",
-#        "flask-wtf",
+        "flask-wtf",
+        "wtforms",
         "flask_sqlalchemy",
         "Flask-Script",
         "Flask-Mail",
-        "sqlalchemy_schemadisplay",
+        "sqlalchemy",
+        "sqlalchemy_utils",
         "ipaddress",
         "python-dateutil",
-        "jinja2<2.9"
+        "jinja2<2.9",
+        "latex"
         ]
 )

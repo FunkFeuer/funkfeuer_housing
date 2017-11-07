@@ -16,8 +16,17 @@ from flask_migrate import Migrate, MigrateCommand
 # Create Flask application
 app = Flask(__name__)
 
-app.config.from_pyfile('../config_debug.py')
-app.config.from_pyfile('../config.py', silent=True)
+app.config.from_pyfile('config_defaults.py')
+
+if(os.environ.get('CONFIG')):
+	app.config.from_pyfile(os.environ.get('CONFIG'))
+else:
+	try:
+		app.config.from_pyfile('/etc/funkfeuer-housing/config.py')
+	except FileNotFoundError:
+		print('WARNING: for production you should create /etc/funkfeuer-housing/config.py')
+		print('  or set the CONFIG environment variable.')
+		app.config.from_pyfile('../config.py', silent=True)
 
 
 from .model import db

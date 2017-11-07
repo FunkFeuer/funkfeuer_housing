@@ -1,0 +1,5 @@
+flask_admin python3-flask-admin
+flask_security python3-flask-security
+flask_mail python3-flask-mail
+ipaddress python3-ipaddr
+latex python3-latex
