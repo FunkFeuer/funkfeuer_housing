@@ -1,19 +1,22 @@
-from ..model import db, Contact, User, insert_set_created_c
+from ..model import db, User, insert_set_created_c
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import select, func, event, inspect
 from datetime import datetime, date
 import werkzeug.exceptions as exceptions
-
+from wtforms.fields import TextAreaField
 
 _payment_types = db.Enum('SEPA-DD', 'money transfer', 'cash_payment', name='payment_types')
 
 class Job(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    description = db.Column(db.Unicode(255))
+    type = db.Column(db.Unicode(32))
+    note = db.Column(db.Unicode(255))
     started = db.Column(db.DateTime(), nullable=False)
     finished = db.Column(db.DateTime())
+    user_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='SET NULL'), nullable=False)
+    user = db.relationship(User, foreign_keys=[user_id])
 
-    groups_view = ['admin', 'billing']
+    groups_view = ['billing']
     groups_details = ['billing']
 
     def __str__(self):
@@ -22,9 +25,9 @@ class Job(db.Model):
 
 class Invoice(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    address = db.Column(db.Unicode(255), nullable=False)
-    contact_id = db.Column(db.Integer(), db.ForeignKey(Contact.id, ondelete='RESTRICT'), nullable=False)
-    contact = db.relationship(Contact, backref='invoices')
+    address = db.Column(db.UnicodeText(255), nullable=False)
+    contact_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'), nullable=False)
+    contact = db.relationship(User, foreign_keys=[contact_id], backref='invoices')
     created_c_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'))
     created_c = db.relationship(User, foreign_keys=[created_c_id])
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
@@ -33,6 +36,8 @@ class Invoice(db.Model):
     payment_type = db.Column(_payment_types)
     path = db.Column(db.String(64), default=None)
     sent_on = db.Column(db.DateTime(), default=None)
+    job_id = db.Column(db.Integer(), db.ForeignKey(Job.id, ondelete='RESTRICT'), nullable=True)
+    job = db.relationship(Job, foreign_keys=[job_id], backref='invoices')
 
     @property
     def number(self):
@@ -56,7 +61,9 @@ class Invoice(db.Model):
                 label('total_amount')
 
     form_columns = ('contact','address', 'payment_type', 'sent_on')
-    column_list = ('number', 'contact', 'amount', 'created_at', 'sent')
+    column_list = ('number', 'contact', 'amount', 'payment_type', 'created_at', 'sent')
+    column_searchable_list = ( 'id', 'contact.first_name', 'contact.last_name', 'contact.company_name')
+    column_filters = ('id', 'payment_type', 'contact', 'amount', 'created_at', 'job')
     groups_view = ['billing']
     groups_create = ['billing']
     groups_edit = ['billing']
@@ -80,9 +87,9 @@ def Invoice_before_update(mapper, connection, target):
 
 class InvoiceItem(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    invoice_id = db.Column(db.Integer(), db.ForeignKey(Invoice.id), nullable=False)
+    invoice_id = db.Column(db.Integer(), db.ForeignKey(Invoice.id, ondelete="CASCADE"), nullable=False)
     invoice = db.relationship(Invoice, backref='items')
-    title = db.Column(db.Unicode(32))
+    title = db.Column(db.Unicode(64))
     detail = db.Column(db.Unicode(255))
     unit_price = db.Column(db.Numeric(precision=10, scale=2, decimal_return_scale=2), nullable=False)
     quantity = db.Column(db.Integer(), default=1)
@@ -110,13 +117,15 @@ class Payment(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
-    contact_id = db.Column(db.Integer(), db.ForeignKey(Contact.id, ondelete='RESTRICT'), nullable=False)
-    contact = db.relationship(Contact, backref='payments')
+    contact_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'), nullable=False)
+    contact = db.relationship(User, backref='payments')
     date = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     paymenttype = db.Column(db.Unicode(32))
     amount = db.Column(db.Numeric(precision=10, scale=2, decimal_return_scale=2))
     detail = db.Column(db.Unicode(255))
     reference = db.Column(db.String(128))
+    job_id = db.Column(db.Integer(), db.ForeignKey(Job.id, ondelete='RESTRICT'), nullable=True)
+    job = db.relationship(Job, foreign_keys=[job_id], backref='payments')
 
     groups_view = ['billing']
     groups_create = ['billing']
@@ -127,8 +136,8 @@ class Contract(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
-    billing_c_id = db.Column(db.Integer(), db.ForeignKey(Contact.id, ondelete='RESTRICT'), nullable=False)
-    billing_c = db.relationship(Contact, backref='contracts', foreign_keys=[billing_c_id])
+    billing_c_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'), nullable=False)
+    billing_c = db.relationship(User, backref='contracts', foreign_keys=[billing_c_id])
     created_c_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'))
     created_c = db.relationship(User, backref='created_contracts', foreign_keys=[created_c_id])
     closed = db.Column(db.Boolean(), nullable=False, default=False)

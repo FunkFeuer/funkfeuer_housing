@@ -19,14 +19,14 @@ app = Flask(__name__)
 app.config.from_pyfile('config_defaults.py')
 
 if(os.environ.get('CONFIG')):
-	app.config.from_pyfile(os.environ.get('CONFIG'))
+    app.config.from_pyfile(os.environ.get('CONFIG'))
 else:
-	try:
-		app.config.from_pyfile('/etc/funkfeuer-housing/config.py')
-	except FileNotFoundError:
-		print('WARNING: for production you should create /etc/funkfeuer-housing/config.py')
-		print('  or set the CONFIG environment variable.')
-		app.config.from_pyfile('../config.py', silent=True)
+    try:
+        app.config.from_pyfile('/etc/funkfeuer-housing/config.py')
+    except FileNotFoundError:
+        print('WARNING: for production you should create /etc/funkfeuer-housing/config.py')
+        print('  or set the CONFIG environment variable.')
+        app.config.from_pyfile('../config.py', silent=True)
 
 
 from .model import db
@@ -55,19 +55,21 @@ admin = flask_admin.Admin(
 )
 
 # Add model views
-admin.add_view(view.UserEditView(model.User, db.session, endpoint="profile"))
+admin.add_view(view.UserEditView(model.User, db.session, endpoint="profile", menu_icon_type='glyph', menu_icon_value='glyphicon-user'))
 
-# admin.add_view(view.UserServerView(model.Server, db.session, name='My Servers', endpoint="servers", menu_icon_type='glyph', menu_icon_value='glyphicon-tasks'))
-admin.add_view(view.ServerView(model.Server, db.session, category='Admin', name='Servers'))
-admin.add_view(view.ACLView(model.IP, db.session, category='Admin', name='IPs'))
-admin.add_view(view.ACLView(model.User, db.session, category='Admin', name='Users'))
-admin.add_view(view.ACLView(model.Contact, db.session, category='Admin', name='Contacts'))
+admin.add_view(view.ServerView(model.Server, db.session, category='Admin', name='Servers', endpoint="admin/servers"))
+admin.add_view(view.AdminUserView(model.User, db.session, category='Admin', name='Users', endpoint="admin/users"))
 
-admin.add_view(view.ContractView(model.Contract, db.session, category='Billing'))
-admin.add_view(view.InvoiceView(model.Invoice, db.session, category='Billing'))
-admin.add_view(view.ACLView(model.Payment, db.session, category='Billing'))
-admin.add_view(view.ACLView(model.Package, db.session, category='Billing'))
+admin.add_view(view.InvoiceView(model.Invoice, db.session, category='Billing', endpoint="admin/invoices"))
+admin.add_view(view.ACLView(model.Payment, db.session, category='Billing', endpoint="admin/payments"))
+admin.add_view(view.ContractView(model.Contract, db.session, category='Billing', endpoint="admin/contracts"))
 
+admin.add_view(view.ACLView(model.Package, db.session, category='System', endpoint="admin/packages"))
+admin.add_view(view.ACLView(model.IP, db.session, category='System', name='IPs', endpoint="admin/ips"))
+admin.add_view(view.ACLView(model.PowerOutlet, db.session, category='System', name='Power Outlets', endpoint="admin/poweroutlets"))
+
+from ff_housing.view.whois import WhoisView
+WhoisView.register_view(app, "/api/whois")
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.

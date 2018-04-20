@@ -4,6 +4,11 @@ from datetime import datetime
 
 from ..model import db
 
+class ClassProperty(object):
+    def __init__(self, func):
+        self.func = func
+    def __get__(self, inst, cls):
+        return self.func(cls)
 
 roles_users = db.Table(
     'roles_users',
@@ -15,19 +20,17 @@ class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.Unicode(32), unique=True)
     description = db.Column(db.Unicode(255))
-    
+
     groups_details = ['admin']
     groups_view = ['admin', 'system']
     groups_create = ['system']
     groups_edit = ['system']
     groups_delete = ['system']
-    
+
     def __str__(self):
         return self.name
 
-
-class Contact(db.Model):
-    __tablename__ = 'contact'
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.Unicode(48), nullable=False)
     last_name = db.Column(db.Unicode(48), nullable=False)
@@ -35,17 +38,22 @@ class Contact(db.Model):
     street = db.Column(db.Unicode(127), nullable=False)
     zip = db.Column(db.Unicode(16), nullable=False)
     town = db.Column(db.Unicode(32), nullable=False)
-#    state = db.Column(db.Unicode(32), nullable=False)
-    country = db.Column(db.Unicode(32), nullable=False)
-    email = db.Column(EmailType, nullable=False)
+    country = db.Column(db.Unicode(32))
+    email = db.Column(db.Unicode(64), nullable=False) #, unique=True)
     phone = db.Column(db.Unicode(32))
+    sepa_iban = db.Column(db.Unicode(32), unique=True)
+    sepa_mandate = db.Column(db.Unicode(32), unique=True)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
-    type = db.Column(db.String(32))
-    __mapper_args__ = {
-        'polymorphic_identity': 'contact',
-        'polymorphic_on': type
-    }
+    mailinglist = db.Column(db.Boolean(), nullable=False, default=True)
+
+    password = db.Column(db.Unicode(255))
+    active = db.Column(db.Boolean(), nullable=False)
+    confirmed_at = db.Column(db.DateTime())
+    last_login = db.Column(db.DateTime())
+    keycard = db.Column(db.String)
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'))
 
     @property
     def address(self):
@@ -60,14 +68,16 @@ class Contact(db.Model):
             return "%s %s / %s" % (self.first_name, self.last_name, self.company_name)
         return "%s %s" % (self.first_name, self.last_name)
 
-    column_list = ('type', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip', 'town')
-    groups_view = ['admin']
-    groups_create = ['admin']
-    groups_edit = ['admin']
-    groups_delete = ['admin']
-    column_searchable_list = ('first_name','last_name', 'company_name', 'email', 'street')
-    column_filters = ('first_name','last_name', 'company_name', 'street')
+    form_columns = ('first_name', 'last_name', 'company_name', 'active', 'mailinglist', 'street', 'zip', 'town', 'country', 'email', 'phone', 'keycard')
+
     column_default_sort = ('id', False)
+    column_filters = ('active','first_name','last_name', 'company_name', 'street')
+    column_list = ('active', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip', 'town', 'keycard')
+    column_searchable_list = ( 'id', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip')
+    groups_view = ['admin', 'system']
+    groups_create = ['admin' 'system']
+    groups_edit = ['admin', 'system']
+    groups_delete = ['system']
 
     @classmethod
     def byID(self, id):
@@ -75,32 +85,6 @@ class Contact(db.Model):
 
     def __str__(self):
         if(self.company_name):
-            return self.company_name
-        return "%s %s" % (self.first_name, self.last_name)
+            return "%s %s, %s (%s)" % (self.first_name, self.last_name, self.company_name, self.id)
+        return "%s %s (%s)" % (self.first_name, self.last_name, self.id)
 
-class User(Contact, UserMixin):
-    id = db.Column(db.Integer(), db.ForeignKey(Contact.id), primary_key=True)
-    login = db.Column(db.Unicode(32), unique=True, nullable=False)
-    password = db.Column(db.Unicode(255))
-    active = db.Column(db.Boolean(), nullable=False)
-    confirmed_at = db.Column(db.DateTime())
-    last_login = db.Column(db.DateTime())
-    keycard = db.Column(db.String)
-    roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('users', lazy='dynamic'))
-    __mapper_args__ = {
-        'polymorphic_identity':'user',
-    }
-
-    column_default_sort = ('id', False)
-    column_filters = ('active','login','first_name','last_name', 'company_name', 'street')
-    column_list = ('active','login', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip', 'town', 'keycard')
-    groups_view = ['admin']
-    groups_create = ['admin']
-    groups_edit = ['admin']
-    groups_delete = ['admin']
-
-    def __str__(self):
-        if(self.company_name):
-            return "%s %s, %s (%s)" % (self.first_name, self.last_name, self.company_name, self.login)
-        return "%s %s (%s)" % (self.first_name, self.last_name, self.login)

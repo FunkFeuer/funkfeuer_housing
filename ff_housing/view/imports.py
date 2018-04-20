@@ -198,7 +198,7 @@ def import_cwispy_csv(dir='data/'):
             if ( 'ccnumber' in r and r['ccnumber'] != None):
                 custidmapper[r['customerid']] = int(r['ccnumber'])
                 
-                for c in model.Contact.query.filter(model.Contact.id==int(r['ccnumber'])):
+                for c in model.User.query.filter(model.User.id==int(r['ccnumber'])):
                     if(c.first_name != r['first'] or c.last_name != r['last']):
                         print('!! different billing address:', c, '\t', r['first'], r['last'], r['company'])
         
@@ -229,7 +229,7 @@ def import_cwispy_csv(dir='data/'):
                 
                 if not server:
                     raise ValueError("could not find Server for Account %s" % r['accountid'], \
-                        str(model.Contact.query.filter(model.Contact.id==custidmapper[r['customerid']]).one()), \
+                        str(model.User.query.filter(model.User.id==custidmapper[r['customerid']]).one()), \
                         r['customerid'], \
                         packages[int(r['packagegroupid'])]['description'], \
                         r['dateopened'], \
@@ -241,7 +241,7 @@ def import_cwispy_csv(dir='data/'):
                 
                 # import accounts to DB
                 print("# account:", \
-                        model.Contact.query.filter(model.Contact.id==custidmapper[r['customerid']]).one(), \
+                        model.User.query.filter(model.User.id==custidmapper[r['customerid']]).one(), \
                         "\t",
                         r['domain'])
                 db.session.add(model.ContractPackage(

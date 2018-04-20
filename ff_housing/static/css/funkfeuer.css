@@ -17,10 +17,10 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 body > .container {
-  padding-top: 5em;
+  padding: 5em 1em 2em;
   background-color: white;
   border: 1px solid #ddd;
-  border-width: 0 1px;
+  border-width: 0 1px 1px;
 }
 
 body > article {
@@ -115,7 +115,7 @@ body .container h3 {
     left: 0;
     border: none;
     border-bottom: 2px solid #6991aa;
-    background-color: rgba(39, 49, 66, 0.7);
+    background-color: rgba(39, 49, 66, 1);
     width: 100%;
     z-index: 2000;
 }

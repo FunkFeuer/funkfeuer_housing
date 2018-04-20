@@ -8,7 +8,7 @@ from ff_housing.utils import daysofmonth
 from sqlalchemy.sql.expression import func
 
 def bill_all():
-    for contact in db.session.query(model.Contact):
+    for contact in db.session.query(model.User):
         bill_contact(contact)
 #        for c in model.Contract.query.filter_by(closed=False, billing_c = contact):
 #            print("%s:\t%s" % (c.billing_c, c))
@@ -30,7 +30,7 @@ def bill_contract(c, invoice = None):
         return False
     invoice = invoice if (invoice != None) else \
     model.Invoice(contact = c.billing_c, payment_type=c.payment_type)
-    print("\n%s:" % c.billing_c)
+    print("\n%s: %s" % (c.billing_c, c.payment_type))
 
     db.session.add(invoice)
 
@@ -48,7 +48,7 @@ def bill_package(package, invoice):
     if (next_billed <= date.today()+relativedelta(days=-30)):
         print ("!! something fishy here: package %s next_billed (%s) is in the past!" % (package, next_billed))
         return False
-    
+
     # TODO: only bill until closed_date if closed_date
 
     # we iterate over a list of montly dates between billed_until and next_billed
@@ -72,7 +72,7 @@ def bill_package(package, invoice):
             amount += package.amount * fraction_of_month
         last_date = next_date
 
-    print("\t%d * %s: %s - %s \t%f" % (package.quantity, package, package.billed_until, next_billed+relativedelta(days=-1), amount))
+    print("\t%d * %s: %s - %s \t%f" % (package.quantity, package, package.billed_until, next_billed+relativedelta(days=-1), amount*package.quantity))
 
     db.session.add(model.InvoiceItem(
         invoice = invoice,
@@ -132,6 +132,7 @@ def send_invoice(invoice):
 
     mail.send(msg)
     invoice.sent_on = datetime.utcnow()
+    model.db.session.commit()
 
 def send_unsent_invoices():
     for i in model.Invoice.query.filter_by(sent_on=None):

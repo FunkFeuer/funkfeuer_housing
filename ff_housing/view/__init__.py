@@ -1,6 +1,7 @@
 from flask_admin.contrib import sqla
 from flask_admin.base import BaseView, expose
 from flask_admin import tools
+from flask_admin.form import SecureForm
 from flask import url_for, redirect, render_template, request, abort
 from flask_security import current_user
 import ff_housing.model as model
@@ -11,15 +12,16 @@ from .imports import *
 
 
 class UserServerView(sqla.ModelView):
+    form_base_class = SecureForm
+
     def get_query(self):
-        from app.model import Server
-        return super(UserServerView, self).get_query().filter(Server.admin_c_id == current_user.id)
+        return super(UserServerView, self).get_query().filter(model.Server.admin_c_id == current_user.id)
 
 
 
 # Create customized model view class
-#@expose(url='/admin')
 class AdminView(sqla.ModelView):
+    form_base_class = SecureForm
 
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
@@ -42,26 +44,11 @@ class AdminView(sqla.ModelView):
                 # login
                 return redirect(url_for('security.login', next=request.url))
 
-class AdminUserView(AdminView):
-    column_display_pk = True
-    column_hide_backrefs = False
-    column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
-
-    @property
-    def can_edit(self):
-        return current_user.has_role('superuser')
-
-    @property
-    def can_delete(self):
-        return current_user.has_role('superuser')
-
-    @property
-    def can_create(self):
-        return current_user.has_role('superuser')
 
 
 
 class ACLView(sqla.ModelView):
+    form_base_class = SecureForm
 
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
@@ -71,11 +58,13 @@ class ACLView(sqla.ModelView):
         return False
 
     def _handle_view(self, name, **kwargs):
+        self._refresh_cache()
         if not self.is_accessible():
             if current_user.is_authenticated:
                 abort(403)
             else:
                 return redirect(url_for('security.login', next=request.url))
+        return super(sqla.ModelView, self)._handle_view(name, **kwargs)
 
     @property
     def can_edit(self):
@@ -144,6 +133,12 @@ class ACLView(sqla.ModelView):
         return None
 
     @property
+    def form_overrides(self):
+        if hasattr(self.model, 'form_overrides'):
+            return self.model.form_overrides
+        return None
+
+    @property
     def inline_models(self):
         if hasattr(self.model, 'inline_models'):
             return self.model.inline_models
@@ -151,16 +146,30 @@ class ACLView(sqla.ModelView):
 
     page_size = 100
 
-
-class ACLUserView(ACLView):
-    column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
-
 class InvoiceView(ACLView):
     inline_models = (model.InvoiceItem,)
 
 class ContractView(ACLView):
     inline_models = (model.ContractPackage,)
 
+class AdminUserView(ACLView):
+    def _refresh_cache(self):
+        if not current_user:
+            self._list_columns = ()
+            return
+        super(ACLView, self)._refresh_cache()
+
+    @property
+    def form_columns(self):
+        if hasattr(self.model, 'form_columns'):
+            cols = list(self.model.form_columns)
+            if current_user and 'billing' in current_user.roles:
+                cols.append('sepa_iban')
+                cols.append('sepa_mandate')
+            if current_user and 'system' in current_user.roles:
+                cols.append('roles')
+            return cols
+        return None
 
 
 from flask import (current_app, request, redirect, flash, abort, json,
@@ -174,6 +183,7 @@ from flask_admin.babel import gettext
 
 
 class UserEditView(sqla.ModelView):
+    form_base_class = SecureForm
     edit_template = "profile.html"
     can_delete = False
     can_create = False
@@ -250,18 +260,18 @@ class UserEditView(sqla.ModelView):
 
 
 class ServerIPQueryAjaxModelLoader(sqla.ajax.QueryAjaxModelLoader):
-	def get_list(self, query, offset=0, limit=20):
-		filters = list(
-			field.ilike(u'%%%s%%' % query) for field in self._cached_fields
-		)
-		filters.append(model.IP.server == None)
-		return (
-			db.session.query(model.IP)
-			.filter(*filters)
-			.all()
-		)
+    def get_list(self, query, offset=0, limit=20):
+        filters = list(
+            field.ilike(u'%%%s%%' % query) for field in self._cached_fields
+        )
+        filters.append(model.IP.server == None)
+        return (
+            db.session.query(model.IP)
+            .filter(*filters)
+            .all()
+        )
 
 class ServerView(ContractView):
-	form_ajax_refs = {
-		'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
-	}
+    form_ajax_refs = {
+        'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
+    }

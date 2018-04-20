@@ -15,6 +15,9 @@
                 {{ render_field(login_user_form.next) }}
                 {{ render_field(login_user_form.submit, class="btn btn-primary") }}
             </form>
+            {% if security.recoverable %}
+            <a href="{{ url_for_security('forgot_password') }}" class="btn btn-info btn-xs" role="button">{{ _('Forgot password') }}</a><br/>
+            {% endif %}
         </div>
     </div>
 </div>
