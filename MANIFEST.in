@@ -1,0 +1,3 @@
+recursive-include ff_housing/static *
+recursive-include ff_housing/templates *
+recursive-exclude ff_housing *.pyc
