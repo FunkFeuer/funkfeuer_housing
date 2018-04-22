@@ -56,7 +56,10 @@ admin = flask_admin.Admin(
 
 # Add model views
 admin.add_view(view.UserEditView(model.User, db.session, endpoint="profile", menu_icon_type='glyph', menu_icon_value='glyphicon-user'))
+admin.add_view(view.UserServerView(model.Server, db.session, endpoint="server", menu_icon_type='glyph', menu_icon_value='glyphicon-tasks'))
+admin.add_view(view.UserIPView(model.IP, db.session, endpoint="ip", name='IPs / rDNS', menu_icon_type='glyph', menu_icon_value='glyphicon-globe'))
 
+# Admin Views
 admin.add_view(view.AdminServerView(model.Server, db.session, category='Admin', name='Servers', endpoint="admin/servers"))
 admin.add_view(view.AdminUserView(model.User, db.session, category='Admin', name='Users', endpoint="admin/users"))
 
@@ -67,6 +70,7 @@ admin.add_view(view.AdminContractView(model.Contract, db.session, category='Bill
 admin.add_view(view.ACLView(model.Package, db.session, category='System', endpoint="admin/packages"))
 admin.add_view(view.ACLView(model.IP, db.session, category='System', name='IPs', endpoint="admin/ips"))
 admin.add_view(view.ACLView(model.PowerOutlet, db.session, category='System', name='Power Outlets', endpoint="admin/poweroutlets"))
+admin.add_view(view.ACLView(model.Role, db.session, category='System', name='Roles', endpoint="admin/roles"))
 
 from ff_housing.view.whois import WhoisView
 WhoisView.register_view(app, "/api/whois")

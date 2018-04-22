@@ -23,9 +23,12 @@ class Role(db.Model, RoleMixin):
 
     groups_details = ['admin']
     groups_view = ['admin', 'system']
-    groups_create = ['system']
-    groups_edit = ['system']
-    groups_delete = ['system']
+    groups_create = [ ]
+    groups_edit = [ ]
+    groups_delete = [ ]
+
+    column_list = ('name', 'description', 'users')
+    column_details_list =  ('name', 'description', 'users')
 
     def __str__(self):
         return self.name
@@ -53,7 +56,7 @@ class User(db.Model, UserMixin):
     last_login = db.Column(db.DateTime())
     keycard = db.Column(db.String)
     roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('users', lazy='dynamic'))
+                            backref=db.backref('users'))
 
     @property
     def address(self):
@@ -72,8 +75,8 @@ class User(db.Model, UserMixin):
 
     column_default_sort = ('id', False)
     column_filters = ('active','first_name','last_name', 'company_name', 'street')
-    column_list = ('active', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip', 'town', 'keycard')
-    column_searchable_list = ( 'id', 'first_name', 'last_name', 'company_name', 'email', 'street', 'zip')
+    column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
+    column_searchable_list = ( 'id', 'first_name', 'last_name', 'company_name', 'email', 'street')
     groups_view = ['admin', 'system']
     groups_create = ['admin' 'system']
     groups_edit = ['admin', 'system']

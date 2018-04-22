@@ -14,14 +14,6 @@ from .scripts import *
 from .imports import *
 
 
-class UserServerView(sqla.ModelView):
-    form_base_class = SecureForm
-
-    def get_query(self):
-        return super(UserServerView, self).get_query().filter(model.Server.admin_c_id == current_user.id)
-
-
-
 # Create customized model view class
 class AdminView(sqla.ModelView):
     form_base_class = SecureForm
@@ -97,6 +89,12 @@ class ACLView(sqla.ModelView):
     def column_list(self):
         if hasattr(self.model, 'column_list'):
             return self.model.column_list
+        return None
+
+    @property
+    def column_details_list(self):
+        if hasattr(self.model, 'column_details_list'):
+            return self.model.column_details_list
         return None
 
     @property
@@ -245,17 +243,41 @@ class AdminUserView(ACLView):
         return None
 
 
+
+
+class ServerIPQueryAjaxModelLoader(sqla.ajax.QueryAjaxModelLoader):
+    def get_list(self, query, offset=0, limit=20):
+        filters = list(
+            field.ilike(u'%%%s%%' % query) for field in self._cached_fields
+        )
+        filters.append(model.IP.server == None)
+        return (
+            db.session.query(model.IP)
+            .filter(*filters)
+            .all()
+        )
+
+class AdminServerView(AdminContractView):
+    form_ajax_refs = {
+        'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
+    }
+
+
 from flask import (current_app, request, redirect, flash, abort, json,
                    Response, get_flashed_messages, stream_with_context)
 from flask_admin.helpers import (get_form_data, validate_form_on_submit,
                                  get_redirect_target, flash_errors)
-from flask_admin.form import BaseForm, FormOpts, rules
+from flask_admin.form import BaseForm, FormOpts, rules, Select2Widget
 from flask_admin.babel import gettext
 
 
+class UserView(sqla.ModelView):
+    def is_accessible(self):
+        if not current_user.is_active or not current_user.is_authenticated:
+            return False
+        return True
 
-
-class UserEditView(sqla.ModelView):
+class UserEditView(UserView):
     form_base_class = SecureForm
     edit_template = "profile.html"
     can_delete = False
@@ -331,20 +353,110 @@ class UserEditView(sqla.ModelView):
                            form_opts=form_opts,
                            return_url=return_url)
 
+class UserServerView(UserView):
+    form_base_class = SecureForm
+    can_delete = False
+    can_create = False
+    can_view_details = True
 
-class ServerIPQueryAjaxModelLoader(sqla.ajax.QueryAjaxModelLoader):
-    def get_list(self, query, offset=0, limit=20):
-        filters = list(
-            field.ilike(u'%%%s%%' % query) for field in self._cached_fields
-        )
-        filters.append(model.IP.server == None)
-        return (
-            db.session.query(model.IP)
-            .filter(*filters)
-            .all()
-        )
+    column_list = ('id', 'servertype', 'location', 'name', 'description', 'ips')
+    column_details_list =  ('id', 'admin_c', 'billing_c', 'name', 'location', 'description', 'servertype', 'location', 'payment_type', 'ips', 'outlets')
+    form_columns = ('name', 'location', 'description')
+    column_sortable_list = ()
 
-class AdminServerView(AdminContractView):
-    form_ajax_refs = {
-        'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
+    def create_view(self):
+        pass
+    def delete_view(self):
+        pass
+    def ajax_update(self):
+        pass
+
+    def get_query(self):
+        return super(UserServerView, self).get_query().filter(self.model.admin_c_id == current_user.id,
+                                                                                                self.model.active == True)
+
+    def get_count_query(self):
+        return self.session.query(func.count('*')).filter(self.model.admin_c_id == current_user.id,
+                                                                                    self.model.active == True)
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        return_url = get_redirect_target() or self.get_url('.index_view')
+
+        if not self.can_edit:
+            return redirect(return_url)
+
+        id = get_mdict_item_or_list(request.args, 'id')
+        if id is None:
+            return redirect(return_url)
+
+        server = self.get_one(id)
+
+        if server is None or server.admin_c_id is not current_user.id:
+            flash(gettext('Server does not exist.'), 'error')
+            return redirect(return_url)
+
+        return super(UserServerView, self).edit_view()
+
+
+
+class UserIPView(UserView):
+    form_base_class = SecureForm
+    can_delete = False
+    can_create = False
+    can_view_details = True
+
+    column_list = ('server', 'server.name', 'ip_address', 'gateway', 'rdns', 'is_subnet', 'type')
+    column_default_sort = 'server.id'
+    column_sortable_list = ()
+
+    form_columns = ('server', 'rdns')
+    form_extra_fields = {
+        'server': sqla.fields.QuerySelectField(
+            label='Server',
+            query_factory=lambda: model.Server.query.filter(model.Server.admin_c_id == current_user.id,
+                                                                                   model.Server.active == True),
+            widget=Select2Widget()
+        )
     }
+
+    def create_view(self):
+        pass
+    def delete_view(self):
+        pass
+    def ajax_update(self):
+        pass
+
+    def get_query(self):
+        return super(UserIPView, self).get_query().join(model.Server).filter(
+            model.Server.admin_c_id == current_user.id,
+            model.Server.active == True,
+            self.model.active == True
+        )
+
+    def get_count_query(self):
+        return self.session.query(func.count('*')).select_from(self.model).join(model.Server).filter(
+            model.Server.admin_c_id == current_user.id,
+            model.Server.active == True,
+            self.model.active == True
+        )
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        return_url = get_redirect_target() or self.get_url('.index_view')
+
+        if not self.can_edit:
+            return redirect(return_url)
+
+        id = get_mdict_item_or_list(request.args, 'id')
+        if id is None:
+            return redirect(return_url)
+
+        ip = self.get_one(id)
+        user = model.User.byID(current_user.id)
+
+        if ip is None or user is None or ip.server not in user.servers:
+            flash(gettext('IP does not exist.'), 'error')
+            return redirect(return_url)
+
+        return super(UserIPView, self).edit_view()
