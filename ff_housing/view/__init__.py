@@ -2,10 +2,13 @@ from flask_admin.contrib import sqla
 from flask_admin.base import BaseView, expose
 from flask_admin import tools
 from flask_admin.form import SecureForm
-from flask import url_for, redirect, render_template, request, abort
+from flask import url_for, redirect, render_template, request, abort, send_file
 from flask_security import current_user
-import ff_housing.model as model
+from flask_admin.model.template import LinkRowAction
+from flask_admin.model.helpers import get_mdict_item_or_list
+from os.path import isfile
 
+import ff_housing.model as model
 
 from .scripts import *
 from .imports import *
@@ -146,10 +149,80 @@ class ACLView(sqla.ModelView):
 
     page_size = 100
 
-class InvoiceView(ACLView):
+
+class AdminInvoiceView(ACLView):
     inline_models = (model.InvoiceItem,)
 
-class ContractView(ACLView):
+    column_extra_row_actions = [
+        LinkRowAction('glyphicon glyphicon-print', 'generate/?id={row_id}')
+        ]
+
+    @expose('/generate/', methods=('POST','GET'))
+    def generate_view(self):
+        """
+            Invoice download view
+        """
+        return_url = get_redirect_target() or self.get_url('.index_view')
+
+        if not  self.can_view_details:
+            return redirect(return_url)
+
+        id = get_mdict_item_or_list(request.args, 'id')
+    
+        if id:
+            invoice = self.get_one(id)
+
+            if invoice is None:
+                flash(gettext('Invoice does not exist.'), 'error')
+                return redirect(return_url)
+
+            if len(invoice.items) == 0:
+                flash(gettext('Invoice has no Items, will not create empty invoice.'), 'error')
+                return redirect(return_url)
+
+            if not invoice.sent and not invoice.exported:
+                # (re-)generate invoice if it was not sent and not exported
+                from ff_housing.controller.accounting import generate_invoice
+                generate_invoice(invoice)
+
+            if invoice.path and isfile(invoice.path):
+                # TODO refactor invoice path
+                res = send_file('.'+invoice.path)
+                res.headers['Content-Disposition'] = 'inline;filename*=%s' % "%s.pdf" % invoice.number
+                return res
+            else:
+                flash(gettext('File does not exist.'), 'error')
+
+        return redirect(return_url)
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        """
+            restrict edit on invoices, that have not been sent.
+        """
+        return_url = get_redirect_target() or self.get_url('.index_view')
+
+        if not self.can_edit:
+            return redirect(return_url)
+
+        id = get_mdict_item_or_list(request.args, 'id')
+        if id is None:
+            return redirect(return_url)
+
+        invoice = self.get_one(id)
+
+        if invoice is None:
+            flash(gettext('Record does not exist.'), 'error')
+            return redirect(return_url)
+
+        if invoice.sent:
+            flash(gettext('Invoice has already been sent and cannot be edited.'), 'error')
+            return redirect(return_url)
+
+        return super(AdminInvoiceView, self).edit_view()
+
+
+class AdminContractView(ACLView):
     inline_models = (model.ContractPackage,)
 
 class AdminUserView(ACLView):
@@ -271,7 +344,7 @@ class ServerIPQueryAjaxModelLoader(sqla.ajax.QueryAjaxModelLoader):
             .all()
         )
 
-class ServerView(ContractView):
+class AdminServerView(AdminContractView):
     form_ajax_refs = {
         'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
     }

@@ -57,12 +57,12 @@ admin = flask_admin.Admin(
 # Add model views
 admin.add_view(view.UserEditView(model.User, db.session, endpoint="profile", menu_icon_type='glyph', menu_icon_value='glyphicon-user'))
 
-admin.add_view(view.ServerView(model.Server, db.session, category='Admin', name='Servers', endpoint="admin/servers"))
+admin.add_view(view.AdminServerView(model.Server, db.session, category='Admin', name='Servers', endpoint="admin/servers"))
 admin.add_view(view.AdminUserView(model.User, db.session, category='Admin', name='Users', endpoint="admin/users"))
 
-admin.add_view(view.InvoiceView(model.Invoice, db.session, category='Billing', endpoint="admin/invoices"))
+admin.add_view(view.AdminInvoiceView(model.Invoice, db.session, category='Billing', endpoint="admin/invoices"))
 admin.add_view(view.ACLView(model.Payment, db.session, category='Billing', endpoint="admin/payments"))
-admin.add_view(view.ContractView(model.Contract, db.session, category='Billing', endpoint="admin/contracts"))
+admin.add_view(view.AdminContractView(model.Contract, db.session, category='Billing', endpoint="admin/contracts"))
 
 admin.add_view(view.ACLView(model.Package, db.session, category='System', endpoint="admin/packages"))
 admin.add_view(view.ACLView(model.IP, db.session, category='System', name='IPs', endpoint="admin/ips"))
