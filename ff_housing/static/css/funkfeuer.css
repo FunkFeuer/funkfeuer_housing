@@ -134,6 +134,10 @@ body .container h3 {
     box-shadow: none;
 }
 
+.nav .dropdown .active a {
+	color: #fff !important;
+}
+
 .navbar-brand, .navbar-nav > li > a {
     text-shadow: none;
 }
