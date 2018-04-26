@@ -406,7 +406,7 @@ class UserIPView(UserView):
     can_create = False
     can_view_details = True
 
-    column_list = ('server', 'server.name', 'ip_address', 'gateway', 'rdns', 'is_subnet', 'type')
+    column_list = ('server', 'server.name', 'ip', 'netmask', 'gateway', 'rdns', 'routed_subnet', 'type')
     column_default_sort = 'server.id'
     column_sortable_list = ()
 
@@ -455,8 +455,84 @@ class UserIPView(UserView):
         ip = self.get_one(id)
         user = model.User.byID(current_user.id)
 
-        if ip is None or user is None or ip.server not in user.servers:
+        if ip is None or user is None or ip.server.admin_c is not user:
             flash(gettext('IP does not exist.'), 'error')
             return redirect(return_url)
 
         return super(UserIPView, self).edit_view()
+
+
+class UserSubnetRDNSView(UserView):
+    form_base_class = SecureForm
+    can_view_details = False
+    column_editable_list = False
+
+    column_list = ('ip_subnet', 'ip_address', 'rdns')
+    column_default_sort = 'ip_address'
+    column_sortable_list = ()
+
+    form_columns = ('subnet', 'ip_address', 'rdns')
+    form_extra_fields = {
+        'subnet': sqla.fields.QuerySelectField(
+            label='Subnet',
+            query_factory=lambda: model.IP.query.join(model.Server).filter(
+                    model.Server.admin_c_id == current_user.id,
+                    model.Server.active == True,
+                    model.IP.routed_subnet != None ),
+            widget=Select2Widget()
+        )
+    }
+
+    def get_query(self):
+        return super(UserSubnetRDNSView, self).get_query().join(model.IP).join(model.Server).filter(
+            model.Server.admin_c_id == current_user.id,
+            model.Server.active == True,
+            model.IP.active == True,
+            model.IP.routed_subnet != None
+        )
+
+    def get_count_query(self):
+        return self.session.query(func.count('*')).select_from(self.model).join(model.IP).join(model.Server).filter(
+            model.Server.admin_c_id == current_user.id,
+            model.Server.active == True,
+            model.IP.active == True,
+            model.IP.routed_subnet != None
+        )
+
+    @property
+    def user_has_access(self):
+        id = get_mdict_item_or_list(request.args, 'id')
+        if id is None:
+            return False
+        entry = self.get_one(id)
+        user = model.User.byID(current_user.id)
+        if entry is None or user is None or entry.subnet.server.admin_c is not user:
+            return False
+        return True
+
+    @expose('/new/', methods=('GET', 'POST'))
+    def create_view(self):
+        if not self.user_has_access:
+            flash(gettext('Entry does not exist.'), 'error')
+            return_url = get_redirect_target() or self.get_url('.index_view')
+            return redirect(return_url)
+        return super(UserSubnetRDNSView, self).create_view()
+
+    @expose('/delete/', methods=('POST',))
+    def delete_view(self):
+        if not self.user_has_access:
+            flash(gettext('Entry does not exist.'), 'error')
+            return_url = get_redirect_target() or self.get_url('.index_view')
+            return redirect(return_url)
+        return super(UserSubnetRDNSView, self).delete_view()
+
+    def ajax_update(self):
+        pass
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        if not self.user_has_access:
+            flash(gettext('Entry does not exist.'), 'error')
+            return_url = get_redirect_target() or self.get_url('.index_view')
+            return redirect(return_url)
+        return super(UserSubnetRDNSView, self).edit_view()
