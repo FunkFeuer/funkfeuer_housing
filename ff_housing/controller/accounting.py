@@ -8,17 +8,24 @@ from ff_housing.utils import daysofmonth
 from sqlalchemy.sql.expression import func
 
 def bill_all():
-    for contact in db.session.query(model.User):
-        bill_contact(contact)
-#        for c in model.Contract.query.filter_by(closed=False, billing_c = contact):
-#            print("%s:\t%s" % (c.billing_c, c))
+    job = model.Job(
+        type = 'billing',
+        note = 'bill_all',
+        started = datetime.utcnow() )
 
-def bill_contact(contact):
+    db.session.add(job)
+    for contact in db.session.query(model.User):
+        bill_contact(contact, job)
+
+    job.finished = datetime.utcnow()
+    db.session.commit()
+
+def bill_contact(contact, job=None):
     invoice = None
     for c in model.Contract.query.filter_by(closed=False, billing_c=contact):
         if c.needs_billing():
             invoice = invoice if (invoice != None) else \
-                model.Invoice(contact = c.billing_c, payment_type=c.payment_type)
+                model.Invoice(contact = c.billing_c, payment_type=c.payment_type, job=job)
             bill_contract(c, invoice)
 
     if (invoice != None):

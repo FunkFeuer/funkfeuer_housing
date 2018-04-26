@@ -11,9 +11,9 @@ class Job(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     type = db.Column(db.Unicode(32))
     note = db.Column(db.Unicode(255))
-    started = db.Column(db.DateTime(), nullable=False)
+    started = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     finished = db.Column(db.DateTime())
-    user_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='SET NULL'), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='SET NULL'))
     user = db.relationship(User, foreign_keys=[user_id])
 
     groups_view = ['billing']
