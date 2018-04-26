@@ -142,5 +142,14 @@ def send_invoice(invoice):
     model.db.session.commit()
 
 def send_unsent_invoices():
+    job = model.Job(
+        type = 'billing',
+        note = 'send_unsent_invoices',
+        started = datetime.utcnow() )
+    db.session.add(job)
+
     for i in model.Invoice.query.filter_by(sent_on=None):
         send_invoice(i)
+
+    job.finished = datetime.utcnow()
+    db.session.commit()
