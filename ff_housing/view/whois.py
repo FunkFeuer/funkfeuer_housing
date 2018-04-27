@@ -38,4 +38,4 @@ class WhoisView(View):
         return None
 
     def register_view(app, url="/api/whois"):
-        app.add_url_rule(url+'/<ip>', view_func=WhoisView.as_view('apps_api'), methods=['GET',])
+        app.add_url_rule(url+'/<ip>', view_func=WhoisView.as_view('apps_api_whois'), methods=['GET',])

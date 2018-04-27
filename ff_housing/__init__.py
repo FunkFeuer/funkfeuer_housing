@@ -76,6 +76,9 @@ admin.add_view(view.ACLView(model.Role, db.session, category='System', name='Rol
 from ff_housing.view.whois import WhoisView
 WhoisView.register_view(app, "/api/whois")
 
+from ff_housing.view.rdns import rdnsView
+rdnsView.register_view(app, "/api/rdns")
+
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.
 @security.context_processor

@@ -177,7 +177,7 @@ class Subnet_rDNS(db.Model):
 
     @property
     def ip(self):
-        return self.ip_address
+        return ipaddress.ip_address(self.ip_address)
 
     @property
     def ip_subnet(self):
