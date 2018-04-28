@@ -18,7 +18,7 @@ class rdnsView(View):
             return entries
 
         if subnet.version == 4:
-            splitlen = int((subnet.max_prefixlen-subnet.prefixlen)/8)
+            splitlen = int((subnet.max_prefixlen-(subnet.prefixlen - (subnet.prefixlen%8)) )/8)
         else:
             splitlen = int((subnet.max_prefixlen-subnet.prefixlen)/4)
 
@@ -30,7 +30,7 @@ class rdnsView(View):
                 model.IP.ip_address.like(self._subnet_sql_match(subnet))
             ).order_by(model.IP.id):
             if ipaddress.ip_interface(addr.ip_address) in subnet:
-                entries.append(_ptr_line(addr, splitlen))
+                entries.append(self._ptr_line(addr, splitlen))
 
         # get routed subnet rDNS entries
         for addr in model.Subnet_rDNS.query.join(model.IP).filter(
@@ -40,12 +40,12 @@ class rdnsView(View):
                 model.Subnet_rDNS.ip_address.like(self._subnet_sql_match(subnet))
             ).order_by(model.IP.id):
             if ipaddress.ip_interface(addr.ip_address) in subnet:
-                entries.append(_ptr_line(addr, splitlen))
+                entries.append(self._ptr_line(addr, splitlen))
 
         return entries
 
 
-    def _ptr_line(self, ip, splitlen):
+    def _ptr_line(self, addr, splitlen):
         return "%s\tPTR\t%s." % \
                 ('.'.join(addr.ip.reverse_pointer.split('.')[:splitlen]),
                     addr.rdns )
