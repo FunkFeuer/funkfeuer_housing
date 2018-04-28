@@ -10,7 +10,7 @@ Flask-Mail
 flask-migrate
 sqlalchemy
 sqlalchemy_schemadisplay
-psycopg2
+psycopg2 --no-binary
 ipaddress
 python-dateutil
 jinja2<2.9
