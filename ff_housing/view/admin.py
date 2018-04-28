@@ -14,11 +14,8 @@ from flask_admin.helpers import (get_form_data, validate_form_on_submit,
                                  get_redirect_target, flash_errors)
 
 import ff_housing.model as model
+from ff_housing.model import db
 from flask_admin.babel import gettext
-
-from .scripts import *
-from .imports import *
-
 
 # Create customized model view class
 class AdminView(sqla.ModelView):

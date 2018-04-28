@@ -1,5 +1,4 @@
 from flask_security import UserMixin, RoleMixin
-from sqlalchemy_utils import EmailType
 from datetime import datetime
 
 from ..model import db

@@ -1,6 +1,7 @@
+# flask manager views
 from .scripts import *
-from .imports import *
 
+# flask-admin views
 from .admin import *
 from .user import *
 
