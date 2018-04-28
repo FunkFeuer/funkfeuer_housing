@@ -254,10 +254,6 @@ class UserSubnetRDNSView(UserView):
 
     @expose('/new/', methods=('GET', 'POST'))
     def create_view(self):
-        if not self.user_has_access:
-            flash(gettext('Entry does not exist.'), 'error')
-            return_url = get_redirect_target() or self.get_url('.index_view')
-            return redirect(return_url)
         return super(UserSubnetRDNSView, self).create_view()
 
     @expose('/delete/', methods=('POST',))
