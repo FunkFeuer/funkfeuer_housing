@@ -5,6 +5,8 @@ from datetime import datetime, date
 import werkzeug.exceptions as exceptions
 from wtforms.fields import TextAreaField
 
+from ff_housing import app
+
 _payment_types = db.Enum('SEPA-DD', 'money transfer', 'cash_payment', name='payment_types')
 
 class Job(db.Model):
@@ -34,7 +36,6 @@ class Invoice(db.Model):
     cancelled = db.Column(db.Boolean(), nullable=False, default=False)
     exported = db.Column(db.Boolean(), nullable=False, default=False)
     payment_type = db.Column(_payment_types)
-    path = db.Column(db.String(64), default=None)
     sent_on = db.Column(db.DateTime(), default=None)
     job_id = db.Column(db.Integer(), db.ForeignKey(Job.id, ondelete='RESTRICT'), nullable=True)
     job = db.relationship(Job, foreign_keys=[job_id], backref='invoices')
@@ -45,6 +46,10 @@ class Invoice(db.Model):
 
     def __str__(self):
         return "Invoice %s for %s" % (self.number, self.contact)
+
+    @property
+    def path(self):
+        return '%s/invoices/%s.pdf' % (app.config.get('FF_HOUSING_FILES_DIR', './files/').rstrip('/'), self.number)
 
     @property
     def sent(self):

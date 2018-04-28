@@ -109,10 +109,8 @@ def generate_invoice(invoice):
     tpl = env.get_template('invoice.tex')
     
     pdf = build_pdf(tpl.render(invoice=invoice, templatedir=os.getcwd()+'/ff_housing/templates/latex/'))
-    path = '%sinvoices/%s.pdf' % (app.config.get('FF_HOUSING_FILES_DIR', './files/'), invoice.number)
-    pdf.save_to(path)
-    invoice.path = path
-    return(path)
+    pdf.save_to(invoice.path)
+    return(invoice.path)
 
 def send_invoice(invoice):
     from jinja2.loaders import FileSystemLoader

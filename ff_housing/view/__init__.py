@@ -184,9 +184,8 @@ class AdminInvoiceView(ACLView):
                 generate_invoice(invoice)
 
             if invoice.path and isfile(invoice.path):
-                # TODO refactor invoice path
-                res = send_file('.'+invoice.path)
-                res.headers['Content-Disposition'] = 'inline;filename*=%s' % "%s.pdf" % invoice.number
+                res = send_file(invoice.path)
+                res.headers['Content-Disposition'] = 'inline;filename*=%s.pdf' % invoice.number
                 return res
             else:
                 flash(gettext('File does not exist.'), 'error')
