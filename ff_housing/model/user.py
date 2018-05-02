@@ -77,7 +77,7 @@ class User(db.Model, UserMixin):
     column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
     column_searchable_list = ( 'id', 'first_name', 'last_name', 'company_name', 'email', 'street')
     groups_view = ['admin', 'system']
-    groups_create = ['admin' 'system']
+    groups_create = ['admin', 'system']
     groups_edit = ['admin', 'system']
     groups_delete = ['system']
 
