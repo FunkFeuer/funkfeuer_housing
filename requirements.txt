@@ -15,3 +15,5 @@ ipaddress
 python-dateutil
 jinja2<2.9
 latex
+sepadd
+python-stdnum

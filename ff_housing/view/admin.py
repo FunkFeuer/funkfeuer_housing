@@ -153,6 +153,7 @@ class ACLView(sqla.ModelView):
 
 class AdminInvoiceView(ACLView):
     inline_models = (model.InvoiceItem,)
+    column_default_sort = ('id', True)
 
     column_extra_row_actions = [
         LinkRowAction('glyphicon glyphicon-print', 'generate/?id={row_id}')
@@ -226,6 +227,7 @@ class AdminContractView(ACLView):
     inline_models = (model.ContractPackage,)
 
 class AdminUserView(ACLView):
+    column_default_sort = ('id', True)
     def _refresh_cache(self):
         if not current_user:
             self._list_columns = ()
@@ -238,7 +240,8 @@ class AdminUserView(ACLView):
             cols = list(self.model.form_columns)
             if current_user and 'billing' in current_user.roles:
                 cols.append('sepa_iban')
-                cols.append('sepa_mandate')
+                cols.append('sepa_mandate_id')
+                cols.append('sepa_mandate_date')
             if current_user and 'system' in current_user.roles:
                 cols.append('roles')
             return cols
@@ -260,6 +263,7 @@ class ServerIPQueryAjaxModelLoader(sqla.ajax.QueryAjaxModelLoader):
         )
 
 class AdminServerView(AdminContractView):
+    column_default_sort = ('id', True)
     form_ajax_refs = {
         'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
     }

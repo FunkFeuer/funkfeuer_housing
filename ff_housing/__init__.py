@@ -66,6 +66,7 @@ admin.add_view(view.AdminUserView(model.User, db.session, category='Admin', name
 admin.add_view(view.AdminInvoiceView(model.Invoice, db.session, category='Billing', endpoint="admin/invoices"))
 admin.add_view(view.ACLView(model.Payment, db.session, category='Billing', endpoint="admin/payments"))
 admin.add_view(view.AdminContractView(model.Contract, db.session, category='Billing', endpoint="admin/contracts"))
+admin.add_view(view.SepaExportView(model.Invoice, db.session, category='Billing', name='SEPA Export', endpoint="admin/sepa-export"))
 
 admin.add_view(view.ACLView(model.Package, db.session, category='System', endpoint="admin/packages"))
 admin.add_view(view.ACLView(model.IP, db.session, category='System', name='IPs', endpoint="admin/ips"))

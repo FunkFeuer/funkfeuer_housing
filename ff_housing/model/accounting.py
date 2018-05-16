@@ -1,6 +1,7 @@
 from ..model import db, User, insert_set_created_c
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import select, func, event, inspect
+from sqlalchemy.orm import validates
 from datetime import datetime, date
 import werkzeug.exceptions as exceptions
 from wtforms.fields import TextAreaField
@@ -35,6 +36,7 @@ class Invoice(db.Model):
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
     cancelled = db.Column(db.Boolean(), nullable=False, default=False)
     exported = db.Column(db.Boolean(), nullable=False, default=False)
+    exported_id = db.Column(db.Unicode(35), nullable=True, default=None)
     payment_type = db.Column(_payment_types)
     sent_on = db.Column(db.DateTime(), default=None)
     job_id = db.Column(db.Integer(), db.ForeignKey(Job.id, ondelete='RESTRICT'), nullable=True)
@@ -64,6 +66,12 @@ class Invoice(db.Model):
         return select([func.sum(InvoiceItem.amount)]).\
                 where(InvoiceItem.invoice_id==cls.id).\
                 label('total_amount')
+
+    @validates('exported_id')
+    def validate_exported_id(self, key, value):
+        if value is '':
+            return None
+        return value
 
     form_columns = ('contact','address', 'payment_type', 'sent_on')
     column_list = ('number', 'contact', 'amount', 'payment_type', 'created_at', 'sent')

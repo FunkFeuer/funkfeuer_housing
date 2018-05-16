@@ -1,5 +1,7 @@
 from flask_security import UserMixin, RoleMixin
-from datetime import datetime
+from datetime import datetime, date
+from sqlalchemy.orm import validates
+from stdnum import iban
 
 from ..model import db
 
@@ -44,7 +46,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Unicode(64), nullable=False) #, unique=True)
     phone = db.Column(db.Unicode(32))
     sepa_iban = db.Column(db.Unicode(32), unique=True)
-    sepa_mandate = db.Column(db.Unicode(32), unique=True)
+    sepa_mandate_id = db.Column(db.Unicode(32), unique=True)
+    sepa_mandate_date = db.Column(db.Date(), default=None)
+    sepa_mandate_first = db.Column(db.Boolean(), nullable=False, default=True)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
     mailinglist = db.Column(db.Boolean(), nullable=False, default=True)
@@ -69,6 +73,32 @@ class User(db.Model, UserMixin):
         if(self.company_name):
             return "%s %s / %s" % (self.first_name, self.last_name, self.company_name)
         return "%s %s" % (self.first_name, self.last_name)
+
+    @validates('sepa_iban', 'sepa_mandate_id', 'sepa_mandate_date')
+    def validate_sepa_mandate(self, key, value):
+        if value == '' or value is None:
+            self.sepa_mandate_first = True
+            value = None
+
+        if key == 'sepa_iban' and value:
+            return iban.validate(value)
+
+        if key == 'sepa_mandate_date':
+            if value is None and self.sepa_mandate_id is not None:
+                raise Exception( "SEPA mandate date must be set for a SEPA mandate." )
+            elif value is not None and self.sepa_mandate_id is None:
+                raise Exception( "SEPA mandate ID must be set for a SEPA mandate." )
+            elif value is not None and self.sepa_iban is None:
+                raise Exception( "IBAN must be set for a SEPA mandate." )
+            elif value and value > date.today():
+                raise Exception( "SEPA Mandate Date must not be in the future." )
+        return value
+
+    @property
+    def has_sepa_mandate(self):
+        if self.sepa_iban and self.sepa_mandate_id and self.sepa_mandate_date:
+            return True
+        return False
 
     form_columns = ('first_name', 'last_name', 'company_name', 'active', 'mailinglist', 'street', 'zip', 'town', 'country', 'email', 'phone', 'keycard')
 

@@ -35,7 +35,7 @@ def file_list(path):
 
 setup(
     name='funkfeuer-housing',
-    version="1.0.1",
+    version="1.0.2",
     description='Funkfeuer Housing Management and Billing',
     author='Clemens Hopfer',
     author_email='datacop@wireloss.net',
@@ -63,6 +63,8 @@ setup(
         "ipaddress",
         "python-dateutil",
         "jinja2<2.9",
-        "latex"
+        "latex",
+        "sepadd",
+        "python-stdnum"
         ]
 )
