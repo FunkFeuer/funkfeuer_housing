@@ -1,8 +1,10 @@
+import ff_housing
 from ff_housing import app, mail, manager, model, db
 from flask_mail import Message
 from datetime import datetime, date
 from dateutil.relativedelta import *
 from dateutil.rrule import *
+from os.path import dirname
 
 from ff_housing.utils import daysofmonth
 from sqlalchemy.sql.expression import func
@@ -97,18 +99,16 @@ def generate_invoice(invoice):
     from jinja2.loaders import FileSystemLoader
     from latex.jinja2 import make_env
     from latex import build_pdf
-    import os
 
     if(len(invoice.items) == 0):
         # skip invoices without items
         return
 
-    # TODO: MWST
-
-    env = make_env(loader=FileSystemLoader('ff_housing/templates/latex/'))
+    latex_templates = '%s/templates/latex/' % dirname(ff_housing.__file__)
+    env = make_env(loader=FileSystemLoader(latex_templates))
     tpl = env.get_template('invoice.tex')
-    
-    pdf = build_pdf(tpl.render(invoice=invoice, templatedir=os.getcwd()+'/ff_housing/templates/latex/'))
+
+    pdf = build_pdf(tpl.render(invoice=invoice, templatedir=latex_templates ))
     pdf.save_to(invoice.path)
     return(invoice.path)
 
@@ -127,12 +127,13 @@ def send_invoice(invoice):
 
     print("sending %s to %s" % (invoice, invoice.contact.email) )
 
-    env = Environment(loader=FileSystemLoader('ff_housing/templates/mail/'))
+    mail_templates = '%s/templates/mail/' % dirname(ff_housing.__file__)
+    env = Environment(loader=FileSystemLoader(mail_templates))
     tpl = env.get_template('invoice.txt')
     msg.body = tpl.render(invoice=invoice)
 
     generate_invoice(invoice)
-    with app.open_resource(".%s" % invoice.path) as fp:
+    with open(invoice.path, mode='rb') as fp:
         msg.attach("%s.pdf" % invoice.number, "application/pdf", fp.read())
 
     mail.send(msg)
