@@ -1,0 +1,33 @@
+ 
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+<div class="container">
+    <div class="row">
+{% for t in tables %}
+        <div class="col-sm-10 col-sm-offset-1">
+            <h1>{{ t.header }}</h1>
+{% if t.lead %}
+        <p class="lead">{{ t.lead }}</p>
+{%endif %}
+            <table class="table table-hover">
+{% if t.table_header is not none %}
+                <tr>
+{% for c in t.table_header %}
+                    <th>{{ c }}</th>
+{% endfor %}
+                </tr>
+{%endif %}
+{% for l in t.rows %}
+                <tr class="{{ l.class or '' }}">
+{% for c in l.columns %}
+                    <td>{{ c }}</td>
+{% endfor %}
+                </tr>
+{% endfor %}
+            </table>
+        </div>
+{% endfor %}
+    </div>
+</div>
+{% endblock body %}

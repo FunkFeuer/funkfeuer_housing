@@ -4,6 +4,8 @@ from sqlalchemy.orm import validates
 from stdnum import iban
 
 from ..model import db
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import select, func
 
 class ClassProperty(object):
     def __init__(self, func):
@@ -99,6 +101,21 @@ class User(db.Model, UserMixin):
         if self.sepa_iban and self.sepa_mandate_id and self.sepa_mandate_date:
             return True
         return False
+
+    @hybrid_property
+    def balance(self):
+        from .accounting import Invoice, Payment
+        return sum([payment.amount for payment in self.payments]) - \
+                    sum([invoice.amount for invoice in self.invoices])
+
+    @balance.expression
+    def balance(cls):
+        from .accounting import Invoice, Payment
+        return select([func.sum(Payment.amount - Invoice.amount)]).\
+                where(Payment.contact_id==cls.id ).\
+                where(Invoice.contact_id==cls.id ).\
+                where(Invoice.sent_on is not None ).\
+                label('total_amount'),
 
     form_columns = ('first_name', 'last_name', 'company_name', 'active', 'mailinglist', 'street', 'zip', 'town', 'country', 'email', 'phone', 'keycard')
 

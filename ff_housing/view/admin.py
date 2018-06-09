@@ -247,6 +247,65 @@ class AdminUserView(ACLView):
             return cols
         return None
 
+    @property
+    def column_list(self):
+        if hasattr(self.model, 'column_list'):
+            cols = list(self.model.column_list)
+            if current_user and 'billing' in current_user.roles:
+                cols.append('balance')
+            return cols
+        return None
+
+    @property
+    def column_extra_row_actions(self):
+        if current_user and 'billing' in current_user.roles:
+            return [
+                LinkRowAction('glyphicon glyphicon-credit-card', 'payments/?id={row_id}')
+            ]
+
+    @expose('/payments/', methods=('GET', ))
+    def payments_view(self):
+        return_url = get_redirect_target() or self.get_url('.index_view')
+
+        if not current_user or 'billing' not in current_user.roles:
+            flash(gettext('Not allowed.'), 'error')
+            return redirect(return_url)
+
+        id = get_mdict_item_or_list(request.args, 'id')
+        if id:
+            user = self.get_one(id)
+
+            if user is None:
+                flash(gettext('User does not exist.'), 'error')
+                return redirect(return_url)
+
+            plist = []
+            psum = 0
+            invoices = model.Invoice.query.filter(model.Invoice.contact_id == user.id, model.Invoice.sent_on != None).all()
+            for e in  sorted(invoices + user.payments, key=lambda el: el.sort_date):
+                if type(e) is model.Invoice:
+                    psum += -e.amount
+                    plist.append({
+                        'class': 'warning',
+                        'date':  e.sort_date.date(),
+                        'amount': -e.amount,
+                        'sum': psum,
+                        'name': str(e),
+                        })
+                else:
+                    psum += e.amount
+                    plist.append({
+                        'class': 'success' if e.amount > 0 else 'danger big',
+                        'date':  e.sort_date.date(),
+                        'amount': e.amount,
+                        'sum': psum,
+                        'name': str(e),
+                        })
+
+            return self.render(template='admin/user_payments_list.html',
+                            list=plist[::-1], user=user, sum=psum)
+
+        return redirect(return_url)
 
 
 

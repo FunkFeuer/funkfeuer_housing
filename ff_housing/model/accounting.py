@@ -57,6 +57,10 @@ class Invoice(db.Model):
     def sent(self):
         return (self.sent_on != None)
 
+    @property
+    def sort_date(self):
+        return self.created_at
+
     @hybrid_property
     def amount(self):
         return sum([item.amount for item in self.items])
@@ -76,7 +80,7 @@ class Invoice(db.Model):
     form_columns = ('contact','address', 'payment_type', 'sent_on')
     column_list = ('number', 'contact', 'amount', 'payment_type', 'created_at', 'sent')
     column_searchable_list = ( 'id', 'contact.first_name', 'contact.last_name', 'contact.company_name')
-    column_filters = ('id', 'payment_type', 'contact', 'amount', 'created_at', 'job')
+    column_filters = ('id', 'payment_type', 'contact_id', 'amount', 'created_at', 'job_id')
     groups_view = ['billing']
     groups_create = ['billing']
     groups_edit = ['billing']
@@ -133,7 +137,7 @@ class Payment(db.Model):
     contact_id = db.Column(db.Integer(), db.ForeignKey(User.id, ondelete='RESTRICT'), nullable=False)
     contact = db.relationship(User, backref='payments')
     date = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
-    paymenttype = db.Column(db.Unicode(32))
+    payment_type = db.Column(_payment_types)
     amount = db.Column(db.Numeric(precision=10, scale=2, decimal_return_scale=2))
     detail = db.Column(db.Unicode(255))
     reference = db.Column(db.String(128))
@@ -142,8 +146,21 @@ class Payment(db.Model):
 
     groups_view = ['billing']
     groups_create = ['billing']
+    groups_edit = ['billing']
     groups_details = ['billing']
+    column_list = ('date', 'amount', 'contact', 'detail', 'job')
+    column_default_sort = ('date', True)
+    form_excluded_columns = ('created_at', 'changed_at')
+    column_filters = ('id', 'payment_type', 'contact_id', 'amount', 'created_at', 'job_id')
 
+    @property
+    def sort_date(self):
+        return self.date
+
+    def __str__(self):
+        if self.amount < 0:
+            return 'Payment %s from %s (failed) ' % (self.id, self.date.date())
+        return 'Payment %s from %s ' % (self.id, self.date.date())
 
 class Contract(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
