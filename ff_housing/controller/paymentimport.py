@@ -26,6 +26,7 @@ class PaymentsImporter():
             self.user = None
             self.bounce = False
             self.imported = False
+            self.forced = False
             self.ignored = False
             self.dryrun = dryrun
             self.job = job
@@ -74,9 +75,10 @@ class PaymentsImporter():
                         self._compare_found(self.found[f[0]], f[1])
             except self.InconsistentUser as e:
                 self.error_msg += str(e)
-                self.found = None
-                self.error = True
-                return False
+                if not self.forced:
+                    self.found = None
+                    self.error = True
+                    return False
 
             if self.user and self.checkUser():
                 if self.payment_value < 0:
@@ -117,13 +119,14 @@ class PaymentsImporter():
         def parseNoteOverride(self):
             if self.payment_note == "ignore":
                 self.found = []
-                self.error_msg = "ignored by Note"
+                self.error_msg = "ignored by Note. "
             elif self.payment_note:
                 m = re.match(r"k(\d+)", self.payment_note)
                 if m:
                     self.found_weak = False
+                    self.forced = True
                     self.user = model.User.byID(int(m.group(1)))
-                    self.error_msg += "forced by Note"
+                    self.error_msg += "forced by Note. "
 
         def checkImported(self):
             if model.Payment.query.filter_by(reference=self.payment_referenceNum).first():
