@@ -113,7 +113,6 @@ class PaymentsImporter():
             if m:
                 self.found_weak = False
                 self.found['uid'] = model.User.byID(int(m.group(1)))
-                print(self.found, m)
 
         def parseNoteOverride(self):
             if self.payment_note == "ignore":
@@ -175,7 +174,7 @@ class PaymentsImporter():
 
 
     def readfile(self):
-        return json.load(self.file.stream)
+        return json.loads(self.file.stream.read().decode('utf-8'))
 
     def importResponse(self, view, dryrun=True):
         try:
