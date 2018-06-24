@@ -40,6 +40,10 @@ MAIL_SERVER = "localhost"
 
 BILLING_REFERENCE_UID_PREFIX = "Housing-k"
 
+POWER_API = "https://localhost/"
+POWER_USER = ""
+POWER_PASS = ""
+
 # SEPA_DD Export settings
 SEPADD_CREDITOR_NAME  = "Test Name"
 SEPADD_CREDITOR_IBAN  =  "AT611904300234573201"

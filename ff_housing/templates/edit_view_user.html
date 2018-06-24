@@ -1,0 +1,13 @@
+{% extends 'admin/model/edit.html' %}
+
+  {% block navlinks %}
+  {% endblock %}
+
+  {% block edit_form %}
+    {% if model.form_header %}
+    <div class="col-sm-11 col-sm-offset-1">
+        <h1>{{ model.form_header }}</h1>
+    </div>
+    {% endif %}
+    {{ super() }}
+  {% endblock %}

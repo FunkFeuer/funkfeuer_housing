@@ -46,6 +46,10 @@ class Server(Contract):
     def __str__(self):
         return 's'+str(self.id)
 
+    @property
+    def form_header(self):
+        return "Server %s" % self.__str__()
+
 event.listen(Server, 'before_insert', insert_set_created_c)
 
 class IPType(db.Model):
@@ -79,7 +83,9 @@ class SwitchPort(db.Model):
 class PowerOutlet(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     outlet = db.Column(db.Unicode(32), unique=True, nullable=False)
+    endpoint = db.Column(db.Unicode(128), unique=True, nullable=False)
     active = db.Column(db.Boolean(), default=True, nullable=False)
+    switchable = db.Column(db.Boolean(), default=True, nullable=False)
     server_id = db.Column(db.Integer(), db.ForeignKey(Server.id, ondelete="SET NULL"))
     server = db.relationship(Server, backref='outlets')
 
@@ -89,7 +95,7 @@ class PowerOutlet(db.Model):
     groups_delete = ['system']
 
     def __str__(self):
-        return str("Outlet %d" % (self.outlet))
+        return str("Outlet %s" % (self.outlet))
 
 class IP(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -159,6 +165,10 @@ class IP(db.Model):
         if self.routed_subnet is not None:
             return "%s (via %s)" % (self.routed_subnet, self.ip)
         return str(self.ip)
+
+    @property
+    def form_header(self):
+        return "IP %s" % self.ip
 
 from flask_security import current_user
 

@@ -1,0 +1,242 @@
+ 
+{% extends 'admin/master.html' %}
+{% block body %}
+<script src="/static/js/Chart.bundle.js"></script>
+<style>
+    canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+    }
+</style>
+{{ super() }}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+{% if outlet.server %}
+            <h1>{{outlet.server.name}} (s{{ outlet.server.id }})</h1>
+            <p class="lead">{{ outlet }}</p>
+{% else %}
+            <h1>{{ outlet }}</h1>
+{% endif %}
+{% if status %}
+        </div>
+        <div class="col-sm-3 col-sm-offset-1">
+            <p class="lead">
+    {% if 'state' in status %} Status: <span id="state">{{ status.state }}</span><br/>    {% endif %}
+    {% if 'watts' in status %} Power: <span id="watts">{{ status.watts }}</span>W<br/>{% endif %}
+    {% if 'volts' in status %} Volt: <span id="volts">{{ status.volts }}</span>V<br/>         {% endif %}
+    {% if 'amps' in status %} Ampere: <span id="amps">{{ status.amps }}</span>A<br/>{% endif %}
+    {% if 'fault' in status %} Overcurrent Fault: <span id="fault">{{ status.fault }}</span><br/>{% endif %}
+            </p>
+        </div>
+{% if form %}
+        <div class="col-sm-4">
+            <form  id="powerform" method="POST" enctype="multipart/form-data">
+            Confirm with your password:<br/>
+            {% for field in form %}
+                {{field}}
+            {% endfor %}
+                <input type="submit" id="powersubmit" value="{{ status.powered and 'Turn OFF' or 'Turn ON' }}" class="btn btn-danger">
+            </form>
+        </div>
+{% endif %}
+        <div class="col-sm-10 col-sm-offset-1">
+            <div style="width:90%; min-height: 200px; margin-top: 1em; max-width: 900px;">
+                <canvas id="canvas"></canvas>
+            </div>
+{% else %}
+            <p class="lead">Currently not available.</p>
+{% endif %}
+        </div>
+    </div>
+</div>
+
+{% if status != None %}
+<script>
+
+var chartColors = {
+    red: 'rgb(255, 99, 132)',
+    orange: 'rgb(255, 159, 64)',
+    yellow: 'rgb(255, 205, 86)',
+    green: 'rgb(75, 192, 192)',
+    blue: 'rgb(54, 162, 235)',
+    purple: 'rgb(153, 102, 255)',
+    grey: 'rgb(201, 203, 207)'
+};
+
+var charts = {};
+
+function newDate(days) {
+    return Date.now + days;
+}
+
+function newDateString(days) {
+    return days;
+}
+
+function randomScalingFactor() {
+    return 1;
+}
+
+
+var config = {
+    labels: ['', '', '', '', '','', '', '', '', '', '','','','',''],
+    datasets: []
+};
+
+function addDataset(name, color, yaxis, stepped=false) {
+    var newDataset = {
+        label: name,
+        borderColor: color,
+        backgroundColor: Chart.helpers.color(color).alpha(0.03).rgbString(),
+        data: [],
+        yAxisID: yaxis,
+        steppedLine: stepped,
+    };
+    config.datasets.push(newDataset);
+    window.powerChart.update();
+    return newDataset
+}
+
+function initDatasets(status) {
+    if ('powered' in status) {
+        charts['powered'] = addDataset('Powered', chartColors.green, 'y-axis-2', true);
+    }
+    if ('watts' in status) {
+        charts['watts'] = addDataset('Watt', chartColors.orange, 'y-axis-1');
+    }
+    if ('volts' in status) {
+        charts['volts'] = addDataset('Volt', chartColors.blue, 'y-axis-1');
+    }
+    if ('amps' in status) {
+        charts['amps'] = addDataset('Ampere', chartColors.red, 'y-axis-2');
+    }
+    if ('pf' in status) {
+        charts['pf'] = addDataset('Power Factor', chartColors.grey, 'y-axis-2');
+    }
+    if ('fault' in status) {
+        charts['fault'] = addDataset('Overcurrent Fault', chartColors.red, 'y-axis-2');
+    }
+
+    updateData(status);
+}
+
+function updateData(status) {
+    for (var chart in charts) {
+        if (chart in status) {
+            if (typeof status[chart] === "number")
+                status[chart] = status[chart].toFixed(1);
+            charts[chart].data.push(status[chart]);
+        }
+    }
+
+    for( var metric in status) {
+        if ($('span#'+metric).length) {
+            $('span#'+metric).text(status[metric]);
+        }
+    }
+
+    if ($('#powersubmit').length) {
+        if (status['powered']) {
+            $('#powersubmit')[0].value = 'Turn OFF';
+            $('input#status')[0].value = 'OFF';
+        } else {
+            $('#powersubmit')[0].value = 'Turn ON'
+            $('input#status')[0].value = 'ON';
+        }
+    }
+
+    if (config.labels.length <= config.datasets[0].data.length) {
+        config.labels.push('');
+    }
+
+    if (config.labels.length > 150) {
+        config.labels.shift();
+        for (var chart in charts)
+            charts[chart].data.shift();
+    }
+
+    window.powerChart.update();
+}
+
+function AjaxUpdate() {
+    $.getJSON( "ajax?id={{ outlet.id }}", function(data) {
+        updateData(data)
+    }).always(function() {
+        setTimeout(AjaxUpdate, 2000);
+    });
+}
+
+window.onload = function() {
+    var ctx = document.getElementById('canvas').getContext('2d');
+    window.powerChart = Chart.Line(ctx, {
+        data: config,
+        options: {
+            responsive: true,
+            hoverMode: 'index',
+            stacked: false,
+            title: {
+                display: true,
+                text: '{{ outlet }}'
+            },
+            scales: {
+                yAxes: [{
+                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                    display: true,
+                    position: 'left',
+                    id: 'y-axis-1',
+                    beginAtZero: true,
+                    ticks: {
+                        min: 0
+                    },
+
+                }, {
+                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                    display: true,
+                    position: 'right',
+                    id: 'y-axis-2',
+                    beginAtZero: true,
+                    ticks: {
+                        min: 0
+                    },
+
+                    // grid line settings
+                    gridLines: {
+                        drawOnChartArea: false, // only want the grid lines for one axis to show up
+                    },
+                }],
+            }
+        }
+    });
+    initDatasets(JSON.parse('{{ status|tojson }}'))
+    setTimeout(AjaxUpdate, 500);
+
+    if ($("#powerform").length)
+        $("#powerform").submit(function(e) {
+            if ($('input#password')[0].value == '') {
+                alert('Please enter password for verification.');
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "ajax?id={{ outlet.id }}",
+                data: $(this).serialize(),
+                success: function(data)
+                {
+                    updateData(data);
+                }
+            });
+            $('input#password')[0].value = '';
+            $('input#powersubmit')[0].disabled = true;
+            setTimeout(function() {
+                $('input#powersubmit')[0].disabled = false;
+            }, 5000);
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+        });
+
+};
+
+</script>
+{% endif %}
+{% endblock body %}

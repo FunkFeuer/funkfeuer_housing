@@ -18,6 +18,7 @@ class UserView(sqla.ModelView):
         if not current_user.is_active or not current_user.is_authenticated:
             return False
         return True
+    edit_template = "edit_view_user.html"
 
 class UserEditView(UserView):
     form_base_class = SecureForm
