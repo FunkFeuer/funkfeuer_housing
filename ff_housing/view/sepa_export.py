@@ -20,10 +20,6 @@ class SepaExportView(sqla.ModelView):
             return True
         return False
 
-#    column_extra_row_actions = [
-#        LinkRowAction('glyphicon glyphicon-print', 'generate/?id={row_id}')
-#        ]
-
     can_create = False
     can_edit = False
     can_delete = False
@@ -35,11 +31,13 @@ class SepaExportView(sqla.ModelView):
     def get_query(self):
         return super(SepaExportView, self).get_query().filter(self.model.sent_on != None,
                                                                                                 self.model.exported == False,
+                                                                                                self.model.cancelled == False,
                                                                                                 self.model.payment_type == 'SEPA-DD')
 	
     def get_count_query(self):
         return self.session.query(func.count('*')).filter(self.model.sent_on != None,
                                                                                     self.model.exported == False,
+                                                                                    self.model.cancelled == False,
                                                                                     self.model.payment_type == 'SEPA-DD')
 
 

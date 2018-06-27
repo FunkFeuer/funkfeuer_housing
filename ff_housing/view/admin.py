@@ -6,6 +6,7 @@ from flask import url_for, redirect, render_template, request, abort, send_file
 from flask_security import current_user
 from flask_admin.model.template import LinkRowAction
 from flask_admin.model.helpers import get_mdict_item_or_list
+from flask_admin.actions import action
 from os.path import isfile
 
 from flask import (current_app, request, redirect, flash, abort, json,
@@ -190,6 +191,9 @@ class AdminInvoiceView(ACLView):
             if invoice.path and isfile(invoice.path):
                 res = send_file(invoice.path)
                 res.headers['Content-Disposition'] = 'inline;filename*=%s.pdf' % invoice.number
+                res.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+                res.headers["Pragma"] = "no-cache"
+                res.headers["Expires"] = "0"
                 return res
             else:
                 flash(gettext('File does not exist.'), 'error')
@@ -222,6 +226,35 @@ class AdminInvoiceView(ACLView):
 
         return super(AdminInvoiceView, self).edit_view()
 
+    @action('cancel', 'Cancel Invoice', ' If Invoice has already been sent, a cancelation invoice will be created. Are you sure you want to cancel this invoice?')
+    def cancel_invoice(self, ids):
+        from ff_housing.controller.accounting import cancel_invoice
+        if len(ids) > 1:
+            raise Exception('Only a single invoice can be cancelled at a time.')
+        try:
+            invoice = self.get_one(ids[0])
+
+            if not invoice:
+                raise Exception('Invoice not found.')
+            if invoice.cancelled:
+                raise Exception('Invoice has already been cancelled.')
+            cancel_invoice(invoice)
+        except Exception as ex:
+            flash(str(ex), 'error')
+
+    @action('send', 'Send Invoices', 'Send selected invoices? (max 25) Already sent invoices will not be sent again.')
+    def send_invoices(self, ids):
+        from ff_housing.controller.accounting import send_invoice
+        if len(ids) > 25:
+            raise Exception('A maximum of 25 invoices can be sent at a time..')
+        try:
+            invoices = self.model.query.filter(self.model.id.in_(ids))
+            for invoice in invoices:
+                send_invoice(invoice)
+                flash('Invoices sent.', 'info')
+
+        except Exception as ex:
+            flash(str(ex), 'error')
 
 class AdminContractView(ACLView):
     inline_models = (model.ContractPackage,)

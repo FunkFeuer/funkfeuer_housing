@@ -47,6 +47,8 @@ class Invoice(db.Model):
         return "AR%02d%05d" % (self.created_at.year % 100, self.id)
 
     def __str__(self):
+        if self.cancelled:
+            return "Invoice %s for %s (cancelled)" % (self.number, self.contact)
         return "Invoice %s for %s" % (self.number, self.contact)
 
     @property
@@ -78,7 +80,7 @@ class Invoice(db.Model):
         return value
 
     form_columns = ('contact','address', 'payment_type', 'sent_on')
-    column_list = ('number', 'contact', 'amount', 'payment_type', 'created_at', 'sent')
+    column_list = ('number', 'contact', 'amount', 'payment_type', 'created_at', 'sent', 'cancelled')
     column_searchable_list = ( 'id', 'contact.first_name', 'contact.last_name', 'contact.company_name')
     column_filters = ('id', 'payment_type', 'contact_id', 'amount', 'created_at', 'job_id')
     groups_view = ['billing']

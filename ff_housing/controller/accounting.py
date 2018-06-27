@@ -9,6 +9,8 @@ from os.path import dirname
 from ff_housing.utils import daysofmonth
 from sqlalchemy.sql.expression import func
 
+from flask import flash
+
 def bill_all():
     job = model.Job(
         type = 'billing',
@@ -116,7 +118,7 @@ def send_invoice(invoice):
     from jinja2.loaders import FileSystemLoader
     from jinja2 import Environment
 
-    if(len(invoice.items) == 0):
+    if invoice.cancelled or len(invoice.items) == 0:
         # skip invoices without items
         return
 
@@ -152,3 +154,35 @@ def send_unsent_invoices():
 
     job.finished = datetime.utcnow()
     db.session.commit()
+
+
+def cancel_invoice(invoice):
+    if invoice.cancelled:
+        return False
+
+    if invoice.sent:
+        # generate cancelation invoice
+        cancelation = model.Invoice(contact = invoice.contact)
+        db.session.add(cancelation)
+        db.session.add(model.InvoiceItem(
+            invoice = cancelation,
+            title = 'Storno Rechnung %s' % invoice.number,
+            detail = '',
+            unit_price = -invoice.amount,
+            quantity = 1
+        ))
+        invoice.cancelled = True
+        flash('Created cancelation invoice.', 'warning')
+    else:
+        # balance invoice to 0
+        db.session.add(model.InvoiceItem(
+            invoice = invoice,
+            title = 'Invoice cancelled',
+            detail = '',
+            unit_price = -invoice.amount,
+            quantity = 1
+        ))
+        invoice.cancelled = True
+        flash('Marked invoce as cancelled.', 'info')
+    model.db.session.commit()
+    return True

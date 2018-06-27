@@ -41,6 +41,8 @@ class SepaExport:
 
         if not invoice.sent:
             raise Exception( "%s has not yet been sent." % invoice.number )
+        if invoice.cancelled:
+            raise Exception( "%s has been cancelled." % invoice.number )
         if not invoice.contact.has_sepa_mandate:
             raise Exception( "%s: No sepa mandate for %s" % (invoice.number, invoice.contact))
         if invoice.payment_type != 'SEPA-DD':
