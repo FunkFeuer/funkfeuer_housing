@@ -247,7 +247,7 @@ class ContractPackage(db.Model):
     closed_at = db.Column(db.DateTime(), default=None)
     last_billed = db.Column(db.Date())
     billed_until = db.Column(db.Date())
-    billing_period = db.Column(db.Integer(), default=1)
+    billing_period = db.Column(db.Integer(), default=None)
 
     def needs_billing(self, billdate=date.today()):
         if (self.active and self.billed_until <= billdate):
@@ -258,7 +258,11 @@ class ContractPackage(db.Model):
     def amount(self):
         return self.package.amount
 
-    #column_list = ('contract', 'package', 'last_billed', 'billed_until', 'billing_period')
+    @validates('billing_period')
+    def validate_billing_period(self, key, value):
+        if value == '' or value is None:
+            return self.package.billing_period
+
     groups_view = ['admin', 'billing']
     groups_edit = ['billing']
     groups_create = ['billing']
