@@ -238,7 +238,7 @@ class ContractPackage(db.Model):
     package_id = db.Column(db.Integer(), db.ForeignKey(Package.id, ondelete='RESTRICT'), nullable=False)
     contract = db.relationship(Contract, backref='packages')
     package = db.relationship(Package, backref='contracts')
-    quantity = db.Column(db.Integer(), default=1)
+    quantity = db.Column(db.Integer(), default=1, nullable=False)
     
     active = db.Column(db.Boolean(), default=True, nullable=False )
     created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
@@ -250,8 +250,13 @@ class ContractPackage(db.Model):
     billing_period = db.Column(db.Integer(), default=None)
 
     def needs_billing(self, billdate=date.today()):
-        if (self.active and self.billed_until <= billdate):
-            return True
+        if self.active and self.opened_at.date() <= billdate:
+            if self.billed_until and self.billed_until > billdate:
+                return False
+            if self.closed_at and self.billed_until and self.closed_at <= self.billed_until:
+                return False
+            else:
+                return True
         return False
 
     @property
@@ -262,6 +267,7 @@ class ContractPackage(db.Model):
     def validate_billing_period(self, key, value):
         if value == '' or value is None:
             return self.package.billing_period
+        return value
 
     groups_view = ['admin', 'billing']
     groups_edit = ['billing']

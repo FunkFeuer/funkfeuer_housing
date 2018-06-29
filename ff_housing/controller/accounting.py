@@ -5,6 +5,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import *
 from dateutil.rrule import *
 from os.path import dirname
+from decimal import Decimal
 
 from ff_housing.utils import daysofmonth
 from sqlalchemy.sql.expression import func
@@ -55,17 +56,30 @@ def bill_package(package, invoice):
         return False
     amount = 0
     # next_billed - the span of this invoice element.
-    next_billed = package.billed_until+relativedelta(months=+package.billing_period)
+    if package.billed_until is not None:
+        billed_until = package.billed_until
+        billingmonthday = billed_until.day
+        next_billed = billed_until + relativedelta(months=+package.billing_period)
+    else:
+        billed_until = package.opened_at.date()
+        billingmonthday = app.config.get('FF_HOUSING_BILLING_DAY_DEFAULT', 25)
+        next_billed = billed_until.replace(day=billingmonthday) + relativedelta(months=+package.billing_period)
+
+    if package.closed_at and next_billed > package.closed_at.date():
+        next_billed = package.closed_at.date()
+
     if (next_billed <= date.today()+relativedelta(days=-30)):
         print ("!! something fishy here: package %s next_billed (%s) is in the past!" % (package, next_billed))
         return False
 
-    # TODO: only bill until closed_date if closed_date
+    # we iterate over a list of montly dates between billed_until and next_billed, including both
+    last_date = billed_until
+    billing_dates = list(rrule(MONTHLY, dtstart=billed_until, until=next_billed, bymonthday=billingmonthday))
+    billing_dates.append(next_billed)
+    for next_date in billing_dates:
+        if type(next_date) is datetime:
+            next_date = next_date.date()
 
-    # we iterate over a list of montly dates between billed_until and next_billed
-    last_date = package.billed_until
-    for next_date in list(rrule(MONTHLY, dtstart=package.billed_until, until=next_billed, bymonthday=package.billed_until.day)):
-        next_date = next_date.date()
         if last_date == next_date:
             continue;
 
@@ -74,21 +88,24 @@ def bill_package(package, invoice):
             amount += package.amount
         elif (int(next_date.month) != int(last_date.month)):
             # days between two months
-            fraction_of_month = (daysofmonth(last_date) - last_date.day) / daysofmonth(last_date) + \
-                (next_date.day / daysofmonth(next_date))
+            fraction_of_month = Decimal(
+                ( daysofmonth(last_date) - (last_date.day-1) ) / daysofmonth(last_date) \
+                + ( (next_date.day-1) / daysofmonth(next_date) )
+            )
             amount += package.amount * fraction_of_month
         else:
             # days in same month
-            fraction_of_month = (next_date.day - last_date.day) / daysofmonth(next_date)
+            fraction_of_month = Decimal((next_date.day - last_date.day) / daysofmonth(next_date))
             amount += package.amount * fraction_of_month
         last_date = next_date
+        amount = amount.quantize(Decimal('.01'))
 
-    print("\t%d * %s: %s - %s \t%f" % (package.quantity, package, package.billed_until, next_billed+relativedelta(days=-1), amount*package.quantity))
+    print("\t%d * %s: %s - %s \t%f" % (package.quantity, package, billed_until, next_billed+relativedelta(days=-1), amount*package.quantity))
 
     db.session.add(model.InvoiceItem(
         invoice = invoice,
         title = str(package),
-        detail = "%s - %s" % (package.billed_until, next_billed+relativedelta(days=-1)),
+        detail = "%s - %s" % (billed_until, next_billed+relativedelta(days=-1)),
         unit_price = amount,
         quantity = package.quantity
     ))
