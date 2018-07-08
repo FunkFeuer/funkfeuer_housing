@@ -200,7 +200,7 @@ class Subnet_rDNS(db.Model):
     @validates('subnet')
     def validate_subnet(self, key, value):
         if current_user and not bool(set(self.groups_edit) & set(current_user.roles)):
-            if value.server.admin_c is not current_user:
+            if value.server.admin_c.id is not current_user.id:
                 raise Exception( "Not allowed." )
         if value.routed_subnet is None or value.routed_subnet is '':
             raise Exception( "Upstream IP does not have a routed subnet." )
