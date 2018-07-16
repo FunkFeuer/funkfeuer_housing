@@ -62,6 +62,10 @@ class PaymentsImporter():
                 self.error = True
                 self.error_msg = "ERROR: Currency not EUR (%s)" % self.payment_currency
                 return False
+            if self.payment_referenceNum is None:
+                self.error = True
+                self.error_msg = "ERROR: reference number not found."
+                return False
             return True
 
         def process(self):
