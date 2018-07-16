@@ -35,7 +35,7 @@ def file_list(path):
 
 setup(
     name='funkfeuer-housing',
-    version="1.0.6",
+    version="1.0.7",
     description='Funkfeuer Housing Management and Billing',
     author='Clemens Hopfer',
     author_email='datacop@wireloss.net',
