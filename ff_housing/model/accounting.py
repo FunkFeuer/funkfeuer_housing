@@ -153,7 +153,7 @@ class Payment(db.Model):
     column_list = ('date', 'amount', 'contact', 'detail', 'job')
     column_default_sort = ('date', True)
     form_excluded_columns = ('created_at', 'changed_at')
-    column_filters = ('id', 'payment_type', 'contact_id', 'amount', 'created_at', 'job_id')
+    column_filters = ('id', 'payment_type', 'contact_id', 'amount', 'created_at', 'job_id', 'reference')
 
     @property
     def sort_date(self):
