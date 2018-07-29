@@ -151,6 +151,7 @@ class Payment(db.Model):
     groups_edit = ['billing']
     groups_details = ['billing']
     column_list = ('date', 'amount', 'contact', 'detail', 'job')
+    column_searchable_list = ( 'id', 'contact.first_name', 'contact.last_name', 'contact.company_name', 'detail', 'reference')
     column_default_sort = ('date', True)
     form_excluded_columns = ('created_at', 'changed_at')
     column_filters = ('id', 'payment_type', 'contact_id', 'amount', 'created_at', 'job_id', 'reference')
@@ -253,7 +254,7 @@ class ContractPackage(db.Model):
         if self.active and self.opened_at.date() <= billdate:
             if self.billed_until and self.billed_until > billdate:
                 return False
-            if self.closed_at and self.billed_until and self.closed_at <= self.billed_until:
+            if self.closed_at and self.billed_until and self.closed_at.date() <= self.billed_until:
                 return False
             else:
                 return True
