@@ -359,3 +359,18 @@ class AdminServerView(AdminContractView):
     form_ajax_refs = {
         'ips': ServerIPQueryAjaxModelLoader('ips', db.session, model.IP, fields=['ip_address'], page_size=10)
     }
+
+    column_extra_row_actions = [
+                LinkRowAction('glyphicon glyphicon-user', 'u?id={row_id}')
+            ]
+
+    @expose('/u', methods=('GET', ))
+    def user_redirect_view(self):
+        id = get_mdict_item_or_list(request.args, 'id')
+        if id:
+            server = self.get_one(id)
+            if server:
+                return redirect(url_for('admin/users.edit_view', id=server.admin_c.id, url=self.get_url('.index_view')))
+            else:
+                flash(gettext('Does not exist.'), 'error')
+                return redirect(return_url)
