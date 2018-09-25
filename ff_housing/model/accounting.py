@@ -191,8 +191,21 @@ class Contract(db.Model):
                 return True
         return False
 
+    @property
+    def billing_active(self):
+        return self.billing_active_at()
+
+
+    def billing_active_at(self, atdate=date.today()):
+        if(self.closed):
+            return False
+        for p in self.packages:
+            if p.billing_active_at(atdate):
+                return True
+        return False
+
     form_excluded_columns = ('created_at', 'changed_at', 'created_c', 'contracttype')
-    column_list = ('id', 'billing_c', 'created_at', 'changed_at')
+    column_list = ('id', 'closed', 'billing_active', 'billing_c', 'created_at', 'changed_at')
     column_searchable_list = ('id',  'billing_c.first_name', 'billing_c.last_name', 'billing_c.company_name')
     column_default_sort = ('id', False)
 
@@ -258,6 +271,18 @@ class ContractPackage(db.Model):
                 return False
             else:
                 return True
+        return False
+
+    @property
+    def billing_active(self):
+        return self.billing_active_at()
+
+
+    def billing_active_at(self, atdate=date.today()):
+        if self.active and self.opened_at and self.opened_at.date() < atdate :
+            if self.closed_at and self.closed_at.date() < atdate:
+                return False
+            return True
         return False
 
     @property

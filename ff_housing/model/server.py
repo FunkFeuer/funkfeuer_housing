@@ -34,7 +34,7 @@ class Server(Contract):
     groups_create = ['admin']
     groups_edit = ['admin']
     groups_delete = ['admin']
-    column_list = ('id','active', 'admin_c', 'ips', 'location', 'servertype', 'created_at')
+    column_list = ('id','active', 'billing_active', 'admin_c', 'ips', 'location', 'servertype', 'created_at')
     column_searchable_list = ('id', 'admin_c.first_name', 'admin_c.last_name', 'admin_c.company_name', 
                               'name', 'location', 'billing_c.first_name', 'billing_c.last_name', 'billing_c.company_name', 'ips.ip_address')
     column_filters = ('active', 'created_at', 'admin_c')

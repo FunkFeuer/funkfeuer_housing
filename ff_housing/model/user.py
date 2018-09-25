@@ -76,6 +76,16 @@ class User(db.Model, UserMixin):
             return "%s %s / %s" % (self.first_name, self.last_name, self.company_name)
         return "%s %s" % (self.first_name, self.last_name)
 
+    @property
+    def billing_active(self):
+        return self.billing_active_at()
+
+    def billing_active_at(self, atdate=date.today()):
+        for c in self.contracts:
+            if c.billing_active_at(atdate):
+                return True
+        return False
+
     @validates('sepa_iban', 'sepa_mandate_id', 'sepa_mandate_date')
     def validate_sepa_mandate(self, key, value):
         if value == '' or value is None:
@@ -121,7 +131,7 @@ class User(db.Model, UserMixin):
 
     column_default_sort = ('id', False)
     column_filters = ('active','first_name','last_name', 'company_name', 'street')
-    column_list = ('id', 'active', 'first_name', 'last_name', 'company_name', 'servers')
+    column_list = ('id', 'active', 'billing_active', 'first_name', 'last_name', 'company_name', 'servers')
     column_searchable_list = ( 'id', 'first_name', 'last_name', 'company_name', 'email', 'street')
     groups_view = ['admin', 'system']
     groups_create = ['admin', 'system']

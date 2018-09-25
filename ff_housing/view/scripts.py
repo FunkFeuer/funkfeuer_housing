@@ -60,3 +60,11 @@ def billing_send_all():
     '''BILLING: send all unsent invoices'''
     accounting.send_unsent_invoices()
     model.db.session.commit()
+
+@manager.command
+def all_billing_users():
+    '''all users (as CSV) with actively billed contract-packages (billing_active)'''
+    print('"id","email","name"')
+    for u in model.User.query.order_by(model.User.id.asc()).all():
+        if u.billing_active:
+            print('%s,"%s","%s"' % (u.id, u.email, u.name,))
