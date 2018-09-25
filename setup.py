@@ -35,7 +35,7 @@ def file_list(path):
 
 setup(
     name='funkfeuer-housing',
-    version="1.0.7",
+    version="1.0.8",
     description='Funkfeuer Housing Management and Billing',
     author='Clemens Hopfer',
     author_email='datacop@wireloss.net',
@@ -59,7 +59,7 @@ setup(
         "flask-migrate",
         "sqlalchemy",
         "sqlalchemy_schemadisplay",
-        "psycopg2",
+        "psycopg2-binary",
         "ipaddress",
         "python-dateutil",
         "jinja2<2.9",
