@@ -155,7 +155,7 @@ ZVR: 814804682, UID: ATU67830859\\
 
 \begin{rechnung}{0}
 %- for item in invoice.items
-  \Posten{\VAR{item.title|e}\hspace{0.5cm}\footnotesize{\VAR{item.detail|e}}}{\VAR{item.quantity}}{\VAR{item.unit_price}}
+  \Posten{\VAR{item.title|e}\hspace{0.5cm}\footnotesize{\VAR{item.detail|e if item.detail}}}{\VAR{item.quantity}}{\VAR{item.unit_price}}
 %- endfor
 \end{rechnung}
 \vspace{0.5cm} 
