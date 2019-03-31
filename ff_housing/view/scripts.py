@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", module="psycopg2")
+
 from .. import app, manager, model, utils
 from ..controller import accounting
 
