@@ -71,3 +71,15 @@ def all_billing_users():
     for u in model.User.query.order_by(model.User.id.asc()).all():
         if u.billing_active:
             print('%s,"%s","%s"' % (u.id, u.email, u.name,))
+
+@manager.command
+def all_active_users():
+    '''all billing-c and admin-c users (as CSV) of actively billed contracts'''
+    print('"id","email","name"')
+    for u in model.User.query.order_by(model.User.id.asc()).all():
+        is_active = u.billing_active
+        for s in u.servers:
+            if s.billing_active:
+                is_active = True
+        if is_active:
+            print('%s,"%s","%s"' % (u.id, u.email, u.name,))
