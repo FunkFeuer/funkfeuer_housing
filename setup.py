@@ -49,7 +49,7 @@ setup(
     install_requires=[
         "Flask",
         "Flask-Admin",
-        "Flask-Login>=0.3.0,<0.4",
+        "Flask-Login>0.4",
         "Flask-security",
         "flask-wtf",
         "wtforms",
@@ -62,7 +62,7 @@ setup(
         "psycopg2-binary",
         "ipaddress",
         "python-dateutil",
-        "jinja2<2.9",
+        "jinja2",
         "latex",
         "sepaxml",
         "python-stdnum",
