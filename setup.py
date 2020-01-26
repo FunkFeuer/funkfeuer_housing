@@ -64,7 +64,7 @@ setup(
         "python-dateutil",
         "jinja2<2.9",
         "latex",
-        "sepadd",
+        "sepaxml",
         "python-stdnum",
         "requests"
         ]

@@ -1,8 +1,8 @@
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import re
-from sepadd.utils import get_rand_string
-from sepadd import SepaDD
+from sepaxml.utils import get_rand_string
+from sepaxml import SepaDD
 
 from flask_security import current_user
 
