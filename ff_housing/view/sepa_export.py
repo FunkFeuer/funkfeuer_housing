@@ -53,7 +53,5 @@ class SepaExportView(sqla.ModelView):
             return resp
 
         except Exception as ex:
-            raise
-            flash(str(ex), 'error')
+            flash("Could not create export: %s" % str(ex), 'error')
 
- 
