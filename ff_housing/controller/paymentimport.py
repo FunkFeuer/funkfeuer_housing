@@ -115,7 +115,7 @@ class PaymentsImporter():
                             return False
 
         def findUserID(self):
-            m = re.search(r"Housing-k(\d+)", self.payment_reference)
+            m = re.search(r"(?i)Housing-k(\d+)", self.payment_reference)
             if m:
                 self.found_weak = False
                 self.found['uid'] = model.User.byID(int(m.group(1)))
