@@ -16,6 +16,8 @@ class ServerType(db.Model):
     groups_edit = ['system']
     groups_delete = ['system']
     
+    form_columns = ('name','description')
+
     def __str__(self):
         return str(self.name)
 
@@ -37,7 +39,7 @@ class Server(Contract):
     column_list = ('id','active', 'billing_active', 'admin_c', 'ips', 'location', 'servertype', 'created_at')
     column_searchable_list = ('id', 'admin_c.first_name', 'admin_c.last_name', 'admin_c.company_name', 
                               'name', 'location', 'billing_c.first_name', 'billing_c.last_name', 'billing_c.company_name', 'ips.ip_address')
-    column_filters = ('active', 'created_at', 'admin_c')
+    column_filters = ('active', 'created_at', 'admin_c', 'servertype')
 
     __mapper_args__ = {
         'polymorphic_identity':'server',
@@ -202,7 +204,7 @@ class Subnet_rDNS(db.Model):
         if current_user and not bool(set(self.groups_edit) & set(current_user.roles)):
             if value.server.admin_c.id is not current_user.id:
                 raise Exception( "Not allowed." )
-        if value.routed_subnet is None or value.routed_subnet is '':
+        if value.routed_subnet is None or value.routed_subnet == '':
             raise Exception( "Upstream IP does not have a routed subnet." )
         return value
 
