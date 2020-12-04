@@ -36,7 +36,6 @@ class rdnsView(View):
         for addr in model.Subnet_rDNS.query.join(model.IP).filter(
                 model.IP.active == True,
                 model.IP.server_id != None,
-                model.IP.rdns != None,
                 model.Subnet_rDNS.ip_address.like(self._subnet_sql_match(subnet))
             ).order_by(model.IP.id):
             if ipaddress.ip_interface(addr.ip_address) in subnet:
