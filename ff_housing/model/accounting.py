@@ -75,7 +75,7 @@ class Invoice(db.Model):
 
     @validates('exported_id')
     def validate_exported_id(self, key, value):
-        if value is '':
+        if value == '':
             return None
         return value
 
