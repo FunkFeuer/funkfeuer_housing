@@ -32,7 +32,7 @@
 % header
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\includegraphics[width=3.9cm]{funkfeuer_wien.pdf}}
+\fancyhead[R]{\includegraphics[width=5cm]{funkfeuer_wien.pdf}}
 %\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze} - ZVR: 814804682} \\
 %	\textcolor{ff-grey}{Postfach 44, 1016 Wien, Österreich}}
 %\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\ZVR: 814804682}
@@ -76,8 +76,7 @@
 \input{vars.tex}
 
 \begin{document}
-
-
+\renewcommand*\chapterheadstartvskip{\vspace*{25pt}}
 \chapter*{SEPA - Lastschrift - Mandat (Ermächtigung)}
 \thispagestyle{fancy}
 
@@ -86,10 +85,10 @@
 \addsec{Zahlungsempfänger}
 
 \begin{tabular}{p{15cm}p{0.5cm}l}
-FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
- c/o Volkskundemuseum Wien\\
- Laudongasse 15-19\\
- 1080 Wien
+\hspace*{10mm} FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
+\hspace*{10mm} c/o Volkskundemuseum Wien\\
+\hspace*{10mm} Laudongasse 15-19\\
+\hspace*{10mm} 1080 Wien
 \end{tabular}%
 
 \vspace{0,5 cm}
@@ -101,24 +100,33 @@ Ich kann/Wir können innerhalb von acht Wochen, beginnend mit dem Belastungsdatu
 
 \addsec{Zahlungspflichtiger}
 
-\begin{tabular}{p{2cm}p{.5cm}l}
-Name\\ \\
-Anschrift\\ \\
+\begin{tabular}{p{4cm}p{.5cm}l}
+\hspace*{10mm} Name \\ \\
 \end{tabular}
-\hfill
 \begin{tabular}{p{13cm}p{.5cm}l}
 \dotfill \\ \\
+\end{tabular}
+
+\begin{tabular}{p{4cm}p{.5cm}l}
+\hspace*{10mm} Anschrift \\ \\
+\end{tabular}
+\begin{tabular}{p{13cm}p{.5cm}l}
 \dotfill \\ \\
 \end{tabular}
 
-\begin{tabular}{p{9cm}p{.5cm}l}
-IBAN \dotfill
-\end{tabular}
-\hfill
 \begin{tabular}{p{4cm}p{.5cm}l}
-BIC \dotfill
+\hspace*{10mm} IBAN \\ \\
+\end{tabular}
+\begin{tabular}{p{13cm}p{.5cm}l}
+\dotfill \\ \\
 \end{tabular}
 
+\begin{tabular}{p{4cm}p{.5cm}l}
+\hspace*{10mm} BIC \\ \\
+\end{tabular}
+\begin{tabular}{p{8cm}p{.5cm}l}
+\dotfill \\ \\
+\end{tabular}
 
 
 \vspace{1,5 cm}
@@ -128,6 +136,7 @@ Ort, Datum
 \end{tabular}
 \hfill
 \begin{tabular}{p{7cm}p{.5cm}l}
+
 \dotfill \\
 Unterschrift
 \end{tabular}
