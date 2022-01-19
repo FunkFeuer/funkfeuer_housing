@@ -10,7 +10,7 @@
 %\usepackage[margin=2cm]{geometry}
 %\usepackage{geometry}
 % \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
-\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage[a4paper,margin=1.5cm,top=2cm,bottom=4cm,footskip=-1cm]{geometry}
 \usepackage{lastpage}
 \usepackage{fancyhdr}% headers
 \usepackage{graphicx} % logo include
@@ -33,7 +33,7 @@
 % header
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\includegraphics[width=3.9cm]{funkfeuer_wien.pdf}}
+\fancyhead[R]{\includegraphics[width=5cm]{funkfeuer_wien.pdf}}
 %\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze} - ZVR: 814804682} \\
 %	\textcolor{ff-grey}{Postfach 44, 1016 Wien, Österreich}}
 %\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\ZVR: 814804682}
@@ -79,33 +79,36 @@
 
 \begin{document}
 \small
+\renewcommand*\chapterheadstartvskip{\vspace*{25pt}}
 \chapter*{Nutzungsvertrag Serverhousing Stellplatz}
 \thispagestyle{fancy}
 \textbf{Gehäuseformat Mini-ITX\\ \\
 Kundennummer: \CustomerNo \\
 Servernummer: \ServerNo
 }
+\newline
+\newline
 
 \vspace{0.5cm}
 Abgeschlossen zwischen
 
 \begin{tabular}{p{15cm}p{0.5cm}l}
-FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
- c/o Volkskundemuseum Wien\\
- Laudongasse 15-19\\
- 1080 Wien
+\hspace*{10mm} FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
+\hspace*{10mm} c/o Volkskundemuseum Wien\\
+\hspace*{10mm} Laudongasse 15-19\\
+\hspace*{10mm} 1080 Wien
 \end{tabular}
 
 als Projekt housing.funkfeuer.at einerseits und
 
 \begin{tabular}{p{15cm}p{0.5cm}l}
-\CustomerName\\
-\CustomerStreet\\
-\CustomerCity
+\hspace*{10mm} \CustomerName\\
+\hspace*{10mm} \CustomerStreet\\
+\hspace*{10mm} \CustomerCity
 \end{tabular}
 
 als Serverbetreiber andererseits wie folgt:
-%\vspace{0.5cm}
+\vspace{0.5cm}
 
 \begin{contract}
    \begin{enumerate}
@@ -122,24 +125,25 @@ als Serverbetreiber andererseits wie folgt:
 \end{enumerate}
 \end{contract}
 
-\vspace{0.5 cm}
-\begin{tabular}{p{7cm}p{.5cm}l}
+\vspace{1cm}
+
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Serverbetreiber
 \end{tabular}
 \hfill
-\begin{tabular}{p{7cm}p{.5cm}l}
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Obmann
 \end{tabular}
 
-\vspace{0.5cm}
-\begin{tabular}{p{7cm}p{.5cm}l}
+\vspace{1cm}
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Ort, Datum
 \end{tabular}
 \hfill
-\begin{tabular}{p{7cm}p{.5cm}l}
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Schriftführer
 \end{tabular}
