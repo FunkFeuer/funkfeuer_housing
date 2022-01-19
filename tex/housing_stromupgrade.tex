@@ -8,7 +8,7 @@
 %\usepackage[margin=2cm]{geometry}
 %\usepackage{geometry}
 % \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
-\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage[a4paper,margin=1.5cm,top=2cm,bottom=4cm,footskip=-1cm]{geometry}
 \usepackage{lastpage}
 \usepackage{fancyhdr}% headers
 \usepackage{graphicx} % logo include
@@ -32,7 +32,7 @@
 % header
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\includegraphics[width=3.9cm]{funkfeuer_wien.pdf}}
+\fancyhead[R]{\includegraphics[width=5cm]{funkfeuer_wien.pdf}}
 %\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze} - ZVR: 814804682} \\
 %	\textcolor{ff-grey}{Postfach 44, 1016 Wien, Österreich}}
 %\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\ZVR: 814804682}
@@ -76,28 +76,32 @@
 \input{vars.tex}
 
 \begin{document}
+\renewcommand*\chapterheadstartvskip{\vspace*{25pt}}
 \chapter*{Vertrag über Bezug zusätzlicher elektrischer Leistung}
 \thispagestyle{fancy}
+
 \textbf{Kundennummer: \CustomerNo \\
 Servernummer: \ServerNo
 }
+\newline
+\newline
 
 \vspace{0.5cm}
 Abgeschlossen zwischen
 
 \begin{tabular}{p{15cm}p{0.5cm}l}
-FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
- c/o Volkskundemuseum Wien\\
- Laudongasse 15-19\\
- 1080 Wien
+\hspace*{10mm} FunkFeuer Wien - Verein zur Förderung freier Netze (ZVR 814804682)\\
+\hspace*{10mm} c/o Volkskundemuseum Wien\\
+\hspace*{10mm} Laudongasse 15-19\\
+\hspace*{10mm} 1080 Wien
 \end{tabular}
 
 als Projekt housing.funkfeuer.at einerseits und
 
 \begin{tabular}{p{15cm}p{0.5cm}l}
-\CustomerName\\
-\CustomerStreet\\
-\CustomerCity
+\hspace*{10mm} \CustomerName\\
+\hspace*{10mm} \CustomerStreet\\
+\hspace*{10mm} \CustomerCity
 \end{tabular}
 
 als Serverbetreiber andererseits wie folgt:
@@ -107,32 +111,33 @@ als Serverbetreiber andererseits wie folgt:
    \begin{enumerate}
 \item Der Serverbetreiber bucht für seine beim Projekt housing.funkfeuer.at eingestellten Server zusätzliche, über die normale Fair-Use Vereinbarung laut Server Housing Nutzungsvertrag hinausgehende, elektrische Leistung von
 \vspace{0.2cm}\\
-150 (3*50) Watt pro Monat.
+\hspace*{3mm} 150 (3*50) Watt pro Monat.
 \vspace{0.2cm}\\
 Für diesen zusätzlichen Leistungsbezug sind 18 Euro Unkostenbeitrag pro Monat zu bezahlen.
-\item Der Serverbetreiber bestätigt dass er die AGBs des Projektes housing.funkfeuer.at zur Kenntnis genommen hat, und Sie uneingeschränkt akzeptiert.
-\item Dieser Vertrag kann zu jedem Monatsende, unter Einhaltung einer vierwöchigen Kündigungsfrist, gekündigt werden.
+\item Der Serverbetreiber bestätigt, dass er die AGBs des Projekts housing.funkfeuer.at zur Kenntnis genommen hat, und Sie uneingeschränkt akzeptiert.
+\item Dieser Vertrag kann zu jedem Monatsende, unter Einhaltung einer Kündigungsfrist von 4 Wochen, gekündigt werden.
 \end{enumerate}
 \end{contract}
 
-\vspace{1,5 cm}
-\begin{tabular}{p{7cm}p{.5cm}l}
+\vspace{1cm}
+
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Serverbetreiber
 \end{tabular}
 \hfill
-\begin{tabular}{p{7cm}p{.5cm}l}
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Obmann
 \end{tabular}
 
-\vspace{0.5cm}
-\begin{tabular}{p{7cm}p{.5cm}l}
+\vspace{1cm}
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Ort, Datum
 \end{tabular}
 \hfill
-\begin{tabular}{p{7cm}p{.5cm}l}
+\begin{tabular}{p{7cm}p{0.5cm}l}
 \dotfill \\
 Schriftführer
 \end{tabular}
