@@ -1,36 +1,17 @@
 \documentclass[parskip=half]{scrreprt}
 
-\input{ffstyle.tex}
-\input{vars.tex}
+\input{ffstyle}
+\input{vars}
 
 \begin{document}
 \small
 \chapter*{Nutzungsvertrag Serverhousing Stellplatz}
-\thispagestyle{fancy}
-\textbf{Gehäuseformat Embedded Board\\ \\
-Kundennummer: \CustomerNo \\
-Servernummer: \ServerNo
-}
-
-\vspace{0.5cm}
-Abgeschlossen zwischen
-
-\begin{tabular}{p{15cm}p{0.5cm}l}
-\Address
-\end{tabular}
-
-als Projekt housing.funkfeuer.at einerseits und
-
-\begin{tabular}{p{15cm}p{0.5cm}l}
-\CustomerName\\
-\CustomerStreet\\
-\CustomerCity
-\end{tabular}
-
-als Serverbetreiber andererseits wie folgt:
+\vspace{-0.8cm}
+\textbf{Gehäuseformat Embedded Board\\}
+\input{addressblock}
 
 \begin{contract}
-   \begin{enumerate}
+\begin{enumerate}
 \item Der Serverbetreiber ist alleinig für den Inhalt auf seinem Rechner verantwortlich.
 \item Der Serverbetreiber stellt sicher, dass der Betrieb des Servers und darauf laufende Dienste geltendes österreichisches Recht nicht verletzen.
 \item Der Serverbetreiber hat einen elektrischen Leistungsbezug und eine Datenmenge nach dem Fair Use Prinzip. Für die faire Verteilung der Leistungen sind Geräte mit 5 Volt (via Micro USB Anschluss) und maximal 8 Watt Leistungsaufnahme und 100 GB Datenverbrauch wünschenswert. Zusätzlich Datenmengen können nur in Absprache mit der Leitung des Projektes housing.funkfeuer.at vereinbart werden.
@@ -45,7 +26,7 @@ als Serverbetreiber andererseits wie folgt:
 \end{enumerate}
 \end{contract}
 
-\input{signature.tex}
+\input{signature}
 
 \includepdf[pages=-]{sepa_mandat.pdf}
 

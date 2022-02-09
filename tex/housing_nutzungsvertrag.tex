@@ -1,34 +1,17 @@
 \documentclass[parskip=half]{scrreprt}
 
-\input{ffstyle.tex}
-\input{vars.tex}
+\input{ffstyle}
+\input{vars}
+
 \begin{document}
+
 \chapter*{Nutzungsvertrag Serverhousing}
-\thispagestyle{fancy}
-\textbf{Gehäuseformat Mini-, Midi-, Big-Tower, 19''\\ \\
-Kundennummer: \CustomerNo \\
-Servernummer: \ServerNo
-}
-
-Abgeschlossen zwischen
-
-\begin{tabular}{p{15cm}p{0.5cm}l}
-\Address
-\end{tabular}
-
-als Projekt housing.funkfeuer.at einerseits und
-
-\begin{tabular}{p{15cm}p{0.5cm}l}
-\CustomerName\\
-\CustomerStreet\\
-\CustomerCity
-\end{tabular}
-\small
-
-als Serverbetreiber andererseits wie folgt:
+\vspace{-0.8cm}
+\textbf{Gehäuseformat Mini-, Midi-, Big-Tower, 19''\\}
+\input{addressblock}
 
 \begin{contract}
-   \begin{enumerate}
+\begin{enumerate}
 \item Der Serverbetreiber ist alleinig für den Inhalt auf seinem Rechner verantwortlich.
 \item Der Serverbetreiber stellt sicher, dass der Betrieb des Servers und darauf laufende Dienste geltendes österreichisches Recht nicht verletzen.
 \item Der Serverbetreiber hat einen elektrischen Leistungsbezug und eine Datenmenge nach dem Fair Use Prinzip. Für die faire Verteilung der Leistungen sind Geräte mit maximal 150 Watt Leistungsaufnahme und 350 GB Datenverbrauch wünschenswert. Zusätzlich Datenmengen können nur in Absprache mit der Leitung des Projektes housing.funkfeuer.at vereinbart werden.
@@ -42,7 +25,7 @@ als Serverbetreiber andererseits wie folgt:
 \end{enumerate}
 \end{contract}
 
-\input{signature.tex}
+\input{signature}
 
 \includepdf[pages=-]{sepa_mandat.pdf}
 
