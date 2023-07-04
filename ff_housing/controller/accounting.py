@@ -139,7 +139,7 @@ def send_invoice(invoice):
         # skip invoices without items
         return
 
-    msg = Message("Funkfeuer Housing Rechnung %s" % invoice.number,
+    msg = Message("FunkFeuer Housing Rechnung %s" % invoice.number,
                   recipients=[invoice.contact.email],
                   bcc=[app.config.get('FF_HOUSING_INVOICES_BCC')]
                   )

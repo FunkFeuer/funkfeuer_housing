@@ -44,7 +44,7 @@ import ff_housing.view as view
 
 admin = flask_admin.Admin(
     app,
-    'Funkfeuer Housing',
+    'FunkFeuer Housing',
     base_template='my_master.html',
     template_mode='bootstrap3',
     index_view=flask_admin.AdminIndexView(
