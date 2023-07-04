@@ -200,6 +200,6 @@ def cancel_invoice(invoice):
             quantity = 1
         ))
         invoice.cancelled = True
-        flash('Marked invoce as cancelled.', 'info')
+        flash('Marked invoice as cancelled.', 'info')
     model.db.session.commit()
     return True
