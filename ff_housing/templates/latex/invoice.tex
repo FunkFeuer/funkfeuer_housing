@@ -1,14 +1,13 @@
-\documentclass[a4paper, parskip=half]{scrlttr2} 
+\documentclass[parskip=half]{scrreprt}
 
-\usepackage[utf8]{inputenc} 
-\usepackage[T1]{fontenc} 
-\usepackage[ngerman]{babel} 
-\usepackage{lmodern} 
-\usepackage[juratotoc]{scrjura} 
-%\usepackage[margin=2cm]{geometry} 
-%\usepackage{geometry} 
-% \usepackage[textheight=8in,footskip=60pt,bottom=1in]{geometry}
-\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=4cm]{geometry}
+\usepackage{pdfpages}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage[juratotoc]{scrjura}
+\usepackage[a4paper,margin=1.5cm,top=1.6cm,bottom=2cm,includeheadfoot,headsep=1.3cm]{geometry}
 \usepackage{lastpage}
 \usepackage{fancyhdr} % headers
 \usepackage{graphicx} % logo include
@@ -17,7 +16,14 @@
 
 \usepackage{paratype} % font
 \renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
-\usepackage[T1]{fontenc}
+
+\def\Address{
+    FunkFeuer Wien - Verein zur Förderung freier Netze\\
+    c/o Volkskundemuseum Wien\\
+    Laudongasse 15-19\\
+    1080 Wien\\
+}
+
 % FunkFeuer Colors
 \definecolor{ff-dark}{RGB}{39,49,66}
 \definecolor{ff-grey}{RGB}{85,98,112}
@@ -25,28 +31,36 @@
 \definecolor{ff-red}{RGB}{242,58,20}
 \definecolor{ff-green}{RGB}{161,200,32}
 
-
-
 \usepackage{wrapfig}
 
-% header
 \pagestyle{fancy}
-\fancyhf{}
-\fancyhead[R]{\vspace{5pt} \includegraphics[width=3.9cm]{\VAR{templatedir}CI/funkfeuer_wien.pdf}}
-\fancyhead[L]{\textcolor{ff-grey}{\textbf{Verein zur Förderung freier Netze}\\\small admin@funkfeuer.at}
-}
 
-% footer
+\fancyhf{}
+\fancyhead[R]{\includegraphics[width=3.9cm]{\VAR{templatedir}CI/funkfeuer_wien.pdf}}
+\fancyhead[L]{\textcolor{ff-grey}{\textbf{FunkFeuer Wien - Verein zur Förderung freier Netze}\\\small billing@funkfeuer.at}}
 \fancyfoot[L]{
-\begin{wrapfigure}{L}{1.6cm}
-\vspace{-15pt}
-\includegraphics[width=1.75cm]{\VAR{templatedir}CI/logo.pdf}
-\end{wrapfigure}
-\vspace{-5pt}
-}
-\fancyfoot[C]{\fontsize{7}{8} \selectfont \textcolor{ff-grey}{\\ZVR: 814804682\\UID: ATU67830859\\BIC/SWIFT: SPLSAT21\\ IBAN: AT552023000000143982}
-}
-\fancyfoot[R]{\textcolor{ff-grey}{\thepage/\pageref{LastPage}}}
+    \begin{wrapfigure}{L}{1.6cm}
+        \vspace{-8.5pt}
+        \includegraphics[width=1.75cm]{\VAR{templatedir}CI/logo.pdf}
+    \end{wrapfigure}
+    \vspace{-5pt}
+    \fontsize{7}{8} \selectfont \textcolor{ff-grey}{
+        \\
+        \Address
+}}
+\fancyfoot[R]{
+    \vspace{-2pt}
+    \fontsize{7}{8} \selectfont \textcolor{ff-grey}{
+        ZVR: 814804682\\
+        UID: ATU67830859\\
+        BIC/SWIFT: SPLSAT21\\
+        IBAN: AT552023000000143982\\
+}}
+\fancyfoot[C]{
+    \textcolor{ff-grey}{
+    \thepage/\pageref*{LastPage}
+}}
+
 
 % lines
 \renewcommand{\headrulewidth}{2pt}
@@ -119,41 +133,39 @@
 
 \begin{document}
 \thispagestyle{fancy}
- 
-\vspace*{0.2 cm} 
-\begin{flushright}
-\footnotesize{
-FunkFeuer Wien - Verein zur Förderung freier Netze\\
-ZVR: 814804682, UID: ATU67830859\\
- c/o Volkskundemuseum Wien\\
- Laudongasse 15-19\\
- 1080 Wien\\
-\href{mailto:billing@funkfeuer.at}{billing@funkfeuer.at}\\
-}
-\end{flushright}
 
-\large{
-\VAR{invoice.address|e}
+\vspace*{0.45cm}
+{\scriptsize FunkFeuer Wien - Verein zur Förderung freier Netze}
+\vspace{-0.2cm}
+\\
+{\scriptsize c/o Volkskundemuseum Wien, Laudongasse 15-19 1080 Wien}\\
+\vspace{-0.4cm}
+
+\large{\VAR{invoice.address|e}}
+
+\vspace{0.4cm}
+
 \small{\VAR{invoice.contact.email|e}}
-\vspace{2mm}
+
+\vspace{0.6cm}
 
 \begin{flushright}
 \small{Wien, \VAR{invoice.created_at.strftime('%d.%m.%Y')|e}}
 \end{flushright}
 
-\vspace{1cm} 
+\vspace{0.2cm}
 
 \Large{ \textbf{Rechnung \VAR{invoice.number|e}} }
 
 \normalsize
-\vspace{0.5cm} 
+\vspace{0.5cm}
 
 \begin{rechnung}{0}
 %- for item in invoice.items
   \Posten{\VAR{item.title|e}\hspace{0.5cm}\footnotesize{\VAR{item.detail|e if item.detail}}}{\VAR{item.quantity}}{\VAR{item.unit_price}}
 %- endfor
 \end{rechnung}
-\vspace{0.5cm} 
+\vspace{0.5cm}
 \normalsize
 Sofern nicht anders ausgewiesen wird gemäß UStG \S 6 Abs 1 Z 27 (Kleinunternehmerregelung)
 keine Umsatzsteuer berechnet.\\\\
